@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>เข้าสู่ระบบผู้ดูแลระบบ - Football Store</title>
+    <link rel="stylesheet" href="Admin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- ส่วนบนของหน้า -->
+        <div class="top-bar"></div>
+
+        <!-- เนื้อหาหลักตรงกลาง (login box + รูป) -->
+        <div class="content">
+            <div class="login-box" style="max-width:420px;width:100%;margin:auto;">
+                <img src="../uploads/kKK.jpg" class="logo" style="margin-bottom:18px;" />
+                <h2 style="text-align:center;margin-bottom:24px;font-size:2rem;color:#0d47a1;font-weight:700;">
+                    <i class="fas fa-user-shield"></i> ผู้ดูแลระบบ
+                </h2>
+                <form id="adminLoginForm" autocomplete="off" style="margin-bottom:10px;">
+                    <label for="admin_email">อีเมล์ <span>*</span></label>
+                    <input type="email" name="admin_email" id="admin_email" placeholder="peeraphong.te@ku.com"
+                        required />
+                    <label for="admin_password">รหัสผ่าน <span>*</span></label>
+                    <input type="password" name="admin_password" id="admin_password" placeholder="•••••••••" required />
+                    <div class="btn-group" style="margin-top:20px;">
+                        <button type="submit" class="btn login" style="font-size:1.1rem;"><i
+                                class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ</button>
+                    </div>
+                    <div id="adminLoginMsg" style="margin-top:16px;color:#ba0000;text-align:center;font-weight:600;">
+                    </div>
+                </form>
+                <p class="help-link" style="margin-top:18px;">
+                    <a href="../View_products/View index.html">เข้าสู่เว็บไซต์ในฐานะชมใช้งานทั่วไป</a>
+                </p>
+                <div class="btn-group" style="margin-top:18px;">
+                    <button type="button" class="btn back-home" onclick="window.location.href='../View_products/View index.html'">
+                        <i class="fas fa-home"></i> กลับไปหน้าหลัก
+                    </button>
+                </div>
+            </div>
+
+            <!-- ภาพตกแต่ง -->
+            <div class="left-player" style="display:none;">
+                <img src="../uploads/PPP.jpg" alt="Player" />
+            </div>
+
+            <div class="right-ball" style="display:none;">
+                <img src="../uploads/OOO.jpg" alt="Ball" />
+            </div>
+        </div>
+
+        <!-- ส่วนล่างของหน้า -->
+        <div class="bottom-bar"></div>
+    </div>
+    <script src="Admin.js"></script>
+    <script>
+        // ดึงข้อมูลจาก database และ redirect ไปหน้า Admin_index.html พร้อมข้อมูล admin
+        document.getElementById("adminLoginForm").onsubmit = function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch("login_admin.php", {
+                method: "POST",
+                body: formData,
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const msg = document.getElementById("adminLoginMsg");
+                    if (data.success) {
+                        // ดึงข้อมูลโปรไฟล์ admin จาก database
+                        fetch("get_admin_profile.php")
+                            .then(res => res.json())
+                            .then(profile => {
+                                if (profile.success) {
+                                    sessionStorage.setItem("admin_firstname", profile.firstname || "");
+                                    sessionStorage.setItem("admin_lastname", profile.lastname || "");
+                                    sessionStorage.setItem("admin_email", profile.email || "");
+                                }
+                                window.location.href = "../Admin_index/Admin_index.html";
+                            });
+                    } else {
+                        msg.textContent = data.message || "เข้าสู่ระบบไม่สำเร็จ";
+                    }
+                });
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+[23-Oct-2025 20:09:55 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`datapj`.`orders`, CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\XAMPP\htdocs\STORE- Copy\Product\basket.php:60
+Stack trace:
+#0 C:\XAMPP\htdocs\STORE- Copy\Product\basket.php(60): mysqli_stmt->execute()
+#1 {main}
+  thrown in C:\XAMPP\htdocs\STORE- Copy\Product\basket.php on line 60
+[23-Oct-2025 20:11:12 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`datapj`.`orders`, CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\XAMPP\htdocs\STORE- Copy\Product\basket.php:60
+Stack trace:
+#0 C:\XAMPP\htdocs\STORE- Copy\Product\basket.php(60): mysqli_stmt->execute()
+#1 {main}
+  thrown in C:\XAMPP\htdocs\STORE- Copy\Product\basket.php on line 60
+[23-Oct-2025 20:11:13 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`datapj`.`orders`, CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\XAMPP\htdocs\STORE- Copy\Product\basket.php:60
+Stack trace:
+#0 C:\XAMPP\htdocs\STORE- Copy\Product\basket.php(60): mysqli_stmt->execute()
+#1 {main}
+  thrown in C:\XAMPP\htdocs\STORE- Copy\Product\basket.php on line 60
+[23-Oct-2025 20:11:15 Asia/Bangkok] PHP Fatal error:  Uncaught mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`datapj`.`orders`, CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) in C:\XAMPP\htdocs\STORE- Copy\Product\basket.php:60
+Stack trace:
+#0 C:\XAMPP\htdocs\STORE- Copy\Product\basket.php(60): mysqli_stmt->execute()
+#1 {main}
+  thrown in C:\XAMPP\htdocs\STORE- Copy\Product\basket.php on line 60

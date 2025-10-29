@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ตรวจสอบการชำระเงิน | Football Store Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="Admin_Payment.css">
+</head>
+
+<body>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>Football Store</h2>
+      <span>Admin Panel</span>
+    </div>
+    <div class="admin-profile">
+      <img src="../uploads/Admin.jpg" alt="">
+      <div class="admin-name">ผู้ดูแลระบบ</div>
+      <div class="admin-email" id="adminProfileEmail">กำลังโหลด...</div>
+    </div>
+    <ul class="menu">
+      <li id="dashboardMenu"><i class="fas fa-chart-line"></i> แดชบอร์ด</li>
+      <li id="productMenu"><i class="fas fa-box"></i> จัดการสินค้า</li>
+      <li class="active" id="paymentMenu"><i class="fas fa-credit-card"></i> การชำระเงิน</li>
+      <li id="reportMenu"><i class="fas fa-file-alt"></i> รายงาน</li>
+      <li id="profileMenu"><i class="fas fa-user"></i> ข้อมูลส่วนตัว</li>
+    </ul>
+    <button class="logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</button>
+  </div>
+
+  <!-- ========== Main Content ========== -->
+  <main class="main-content">
+    <header>
+      <h1><i class="fas fa-credit-card"></i> ตรวจสอบและจัดการสถานะการชำระเงิน</h1>
+    </header>
+
+    <!-- Summary Cards -->
+    <section class="summary">
+      <div class="card total">
+        <h3>คำสั่งซื้อทั้งหมด</h3>
+        <p id="totalCount">0</p>
+      </div>
+      <div class="card waiting">
+        <h3>ยกเลิกคำสั่งจากระบบ</h3>
+        <p id="cancelCount">0</p>
+      </div>
+      <div class="card checking">
+        <h3>รอตรวจสอบ</h3>
+        <p id="checkingCount">0</p>
+      </div>
+      <div class="card success">
+        <h3>ชำระเงินสมบูรณ์</h3>
+        <p id="successCount">0</p>
+      </div>
+      <div class="card" style="border-left:5px solid #0ea5e9;">
+        <h3>เตรียมส่งสินค้าให้คุณแล้ว</h3>
+        <p id="prepareCount">0</p>
+      </div>
+    </section>
+
+    <!-- Search and Filter -->
+    <div class="filter-bar">
+      <input type="text" id="search" placeholder="🔎 ค้นหาหมายเลขคำสั่งซื้อ, รหัสการชำระ หรือชื่อลูกค้า..." autocomplete="off">
+      <select id="filterStatus">
+        <option value="">🗂 ทุกสถานะ</option>
+        <option value="ชำระเงินสำเร็จรอการตรวจสอบ">รอตรวจสอบ</option>
+        <option value="ชำระเงินสมบูรณ์รอจัดส่ง">ชำระเงินสมบูรณ์</option>
+        <option value="ยกเลิกคำสั่งจากระบบ">ยกเลิกคำสั่งจากระบบ</option>
+        <option value="เตรียมส่งสินค้าให้คุณแล้ว">เตรียมส่งสินค้า</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <section class="table-section">
+      <table>
+        <thead>
+          <tr>
+            <th>รหัสการชำระ</th>
+            <th>หมายเลขคำสั่งซื้อ</th>
+            <th>อีเมล</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>สินค้า</th>
+            <th>จำนวน</th>
+            <th>ราคา</th>
+            <th>สถานะ</th>
+            <th>หลักฐาน</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="paymentTable">
+          <!-- ข้อมูลจะถูกเติมโดย JS -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h2 style="text-align:center;margin-bottom:18px;">
+        <i class="fas fa-truck-moving" style="color:#0ea5e9;margin-right:8px;"></i>
+        เปลี่ยนสถานะคำสั่งซื้อ
+      </h2>
+      <div class="info" style="background:#f8fafc;padding:18px 18px 10px 18px;border-radius:14px;border:1px solid #e5eaf0;margin-bottom:18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:12px 24px;">
+          <div style="flex:1 1 220px;">
+            <p><b>รหัสการชำระ:</b> <span id="mPay"></span></p>
+            <p><b>หมายเลขคำสั่งซื้อ:</b> <span id="mOrder"></span></p>
+            <p><b>อีเมล:</b> <span id="mEmail"></span></p>
+            <p><b>ชื่อ-นามสกุล:</b> <span id="mName"></span></p>
+            <p><b>ยอดชำระ:</b> <span id="mAmount"></span></p>
+            <p><b>สถานะ:</b>
+              <span id="mStatus" style="font-weight:700;color:#0ea5e9;background:#e6f6ff;padding:3px 12px;border-radius:8px;"></span>
+            </p>
+          </div>
+          <div style="flex:0 0 150px;display:flex;align-items:center;justify-content:center;">
+            <div style="border:1px solid #e5eaf0; border-radius:14px; padding:8px; background:#f8fafc;">
+              <img id="mSlip" src="" class="slip-preview" style="width:120px;height:120px;object-fit:cover;" onclick="openSlip(this.src)">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:18px;">
+        <label style="font-weight:700;color:#0ea5e9;display:block;margin-bottom:6px;">
+          <i class="fas fa-exchange-alt"></i> เลือกสถานะใหม่:
+        </label>
+        <select id="statusSelect" style="width:100%;padding:12px 10px;border-radius:8px;border:1px solid #cfe0ff;font-size:16px;">
+          <option value="ชำระเงินสำเร็จรอการตรวจสอบ">ชำระเงินสำเร็จรอการตรวจสอบ</option>
+          <option value="ชำระเงินสมบูรณ์รอจัดส่ง">ชำระเงินสมบูรณ์รอจัดส่ง</option>
+          <option value="เตรียมส่งสินค้าให้คุณแล้ว">เตรียมส่งสินค้าให้คุณแล้ว</option>
+          <option value="ยกเลิกคำสั่งจากระบบ">ยกเลิกคำสั่งจากระบบ</option>
+        </select>
+      </div>
+      <button class="btn-save" onclick="saveStatus()" style="font-size:18px;padding:13px 0;margin-top:8px;">
+        <i class="fas fa-save"></i> บันทึกสถานะ
+      </button>
+    </div>
+  </div>
+
+  <!-- เพิ่ม popup สำหรับแสดงรูป slip -->
+  <div id="popup">
+    <button id="popupClose" onclick="closeSlip()">&times;</button>
+    <img id="popupImg" src="">
+  </div>
+
+  <script>
+    // ================== ฟังก์ชันเปิด/ปิดรูปสลิป ==================
+    function openSlip(src) {
+      const popup = document.getElementById("popup");
+      document.getElementById("popupImg").src = src;
+      popup.classList.add("show");
+    }
+    function closeSlip() {
+      document.getElementById("popup").classList.remove("show");
+    }
+
+    // ================== Modal ==================
+    function openModal(btn) {
+      const row = btn.closest("tr").children;
+      document.getElementById("mPay").textContent = row[0].textContent;
+      document.getElementById("mOrder").textContent = row[1].textContent;
+      document.getElementById("mEmail").textContent = row[2].textContent;
+      document.getElementById("mName").textContent = row[3].textContent;
+      document.getElementById("mAmount").textContent = row[6].textContent;
+      // ดึงสถานะปัจจุบันจาก span
+      const statusSpan = row[7].querySelector(".status");
+      const currentStatus = statusSpan ? statusSpan.textContent.trim() : row[7].textContent.trim();
+      document.getElementById("mStatus").textContent = currentStatus;
+      // ดึง path สลิปจากปุ่มใน cell
+      const slipBtn = row[8].querySelector("button");
+      document.getElementById("mSlip").src = slipBtn ? slipBtn.getAttribute("onclick").match(/'([^']+)'/)[1] : "";
+      // ตั้งค่า select ให้ตรงกับสถานะปัจจุบัน (ใช้ value)
+      const statusSelect = document.getElementById("statusSelect");
+      let found = false;
+      for (let i = 0; i < statusSelect.options.length; i++) {
+        if (
+          statusSelect.options[i].value === currentStatus
+        ) {
+          statusSelect.selectedIndex = i;
+          found = true;
+          break;
+        }
+      }
+      if (!found) statusSelect.selectedIndex = 0;
+      document.getElementById("modal").classList.add("show");
+    }
+    function closeModal() { document.getElementById("modal").classList.remove("show"); }
+
+    // ================== ฟังก์ชันบันทึกสถานะ ==================
+    function saveStatus() {
+      const newStatus = document.getElementById("statusSelect").value;
+      const paymentCode = document.getElementById("mPay").textContent;
+      fetch("Admin_Payment.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `edit_status=1&payment_code=${encodeURIComponent(paymentCode)}&new_status=${encodeURIComponent(newStatus)}`
+      })
+        .then(async res => {
+          const raw = await res.text();
+          try {
+            const data = JSON.parse(raw);
+            if (data.success) {
+              alert("✅ เปลี่ยนสถานะเป็น: " + newStatus);
+              closeModal();
+              loadPayments();
+            } else {
+              alert("❌ " + (data.message || "อัปเดตสถานะไม่สำเร็จ"));
+            }
+          } catch (err) {
+            console.error("JSON parse error:", raw);
+            alert("❌ เซิร์ฟเวอร์ส่งข้อมูลไม่ถูกต้อง\n\n" + raw);
+          }
+        })
+        .catch(err => {
+          alert("เกิดข้อผิดพลาดในการเชื่อมต่อ: " + err);
+        });
+    }
+
+    // ================== ฟังก์ชันกรองข้อมูล ==================
+    const search = document.getElementById("search");
+    const filter = document.getElementById("filterStatus");
+
+    function filterTable() {
+      const q = search.value.toLowerCase();
+      const s = filter.value;
+      const rows = document.querySelectorAll("#paymentTable tr");
+      rows.forEach(r => {
+        const rowText = r.innerText.toLowerCase();
+        const matchText = rowText.includes(q);
+        let matchStatus = true;
+        if (s === "ยกเลิกคำสั่งจากระบบ") {
+          matchStatus = r.dataset.status === "ยกเลิกคำสั่งจากระบบ";
+        } else if (s) {
+          matchStatus = r.dataset.status === s;
+        }
+        r.style.display = matchText && matchStatus ? "" : "none";
+      });
+    }
+
+    search.addEventListener("keyup", filterTable);
+    filter.addEventListener("change", filterTable);
+
+    // ================== โหลดข้อมูลจาก Backend ==================
+    function loadPayments() {
+      fetch("Admin_Payment.php?get_all_payments=1")
+        .then(async res => {
+          const data = await res.json();
+          const tbody = document.getElementById("paymentTable");
+          tbody.innerHTML = "";
+
+          let total = 0, cancel = 0, checking = 0, success = 0, prepare = 0;
+
+          const orders = data.orders || [];
+          const payments = data.payments || [];
+
+          const paymentMap = {};
+          payments.forEach(pay => {
+            if (pay.order_number) paymentMap[pay.order_number] = pay;
+          });
+
+          if (data.success && Array.isArray(orders)) {
+            total = orders.length;
+            orders.forEach(order => {
+              if (order.status === "ยกเลิกคำสั่งจากระบบ") cancel++;
+              if (order.status === "ชำระเงินสำเร็จรอการตรวจสอบ") checking++;
+              if (order.status === "ชำระเงินสมบูรณ์รอจัดส่ง") success++;
+              if (order.status === "เตรียมส่งสินค้าให้คุณแล้ว") prepare++;
+
+              let statusClass = "pending";
+              if (order.status === "ชำระเงินสมบูรณ์รอจัดส่ง") statusClass = "success";
+              else if (order.status === "ชำระเงินสำเร็จรอการตรวจสอบ") statusClass = "waiting";
+              else if (order.status === "ยกเลิกคำสั่งจากระบบ") statusClass = "cancel";
+              else if (order.status === "เตรียมส่งสินค้าให้คุณแล้ว") statusClass = "info";
+
+              const pay = paymentMap[order.order_number] || {};
+
+              let paymentCode = pay.payment_code || '';
+              let productName = pay.product_name || '';
+              let stockOut = pay.stock_out || '';
+              let slipHtml = pay.slip_image
+                ? `<button class="view-slip" onclick="openSlip('../Admin_Payment/slips_Admin/${pay.slip_image}')">Slip</button>`
+                : "";
+
+              let priceInfo = order.total_amount ? Number(order.total_amount).toLocaleString() : "";
+
+              tbody.innerHTML += `
+                <tr data-status="${order.status}">
+                  <td>${paymentCode}</td>
+                  <td>${order.order_number || ''}</td>
+                  <td>${order.email || ''}</td>
+                  <td>${(order.firstname || '') + ' ' + (order.lastname || '')}</td>
+                  <td>${productName}</td>
+                  <td>${stockOut}</td>
+                  <td>${priceInfo}</td>
+                  <td><span class="status ${statusClass}">${order.status || ''}</span></td>
+                  <td>${slipHtml}</td>
+                  <td><button class="btn-edit" onclick="openModal(this)">แก้ไขสถานะ</button></td>
+                </tr>`;
+            });
+          } else {
+            tbody.innerHTML = `<tr><td colspan="10">ไม่พบข้อมูลคำสั่งซื้อ</td></tr>`;
+          }
+
+          document.getElementById("totalCount").textContent = total;
+          document.getElementById("cancelCount").textContent = cancel;
+          document.getElementById("checkingCount").textContent = checking;
+          document.getElementById("successCount").textContent = success;
+          document.getElementById("prepareCount").textContent = prepare;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", loadPayments);
+
+    // ================== Sidebar Navigation ==================
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("dashboardMenu").onclick = () => window.location.href = "../Admin_index/Admin_index.html";
+      document.getElementById("productMenu").onclick = () => window.location.href = "../admin_products/admin_products.html";
+      document.getElementById("paymentMenu").onclick = () => window.location.href = "../Admin_Payment/Admin_Payment.html";
+      document.getElementById("reportMenu").onclick = () => window.location.href = "../Admin_report/Admin_report.html";
+      document.getElementById("profileMenu").onclick = () => window.location.href = "../Admin_personal information/personal information.html";
+      document.getElementById("logoutBtn").onclick = () => window.location.href = "../Admin/Admin.html";
+
+      // ดึงข้อมูลโปรไฟล์ผู้ดูแลระบบมาแสดง
+      fetch("../Admin/get_admin_profile.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById("adminProfileEmail").textContent = data.email || "ไม่พบข้อมูลอีเมล";
+            document.querySelector(".admin-name").textContent =
+              (data.firstname || "") + (data.lastname ? " " + data.lastname : "");
+          } else {
+            document.getElementById("adminProfileEmail").textContent = "ไม่พบข้อมูลอีเมล";
+          }
+        })
+        .catch(() => {
+          document.getElementById("adminProfileEmail").textContent = "ไม่พบข้อมูลอีเมล";
+        });
+    });
+  </script>
+</body>
+
+</html>

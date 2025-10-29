@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เข้าสู่ระบบ - Football Store</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <div class="overlay">
+    <div class="login-box">
+      <img src="../uploads/kKK.jpg" class="logo" alt="Football Store Logo"/>
+
+      <form id="loginForm" method="POST" action="login.php">  
+        <label for="email">อีเมล์ <span>*</span></label>
+        <input type="email" name="email" id="email" placeholder="อีเมล" required />
+
+        <label for="password">รหัสผ่าน <span>*</span></label>
+        <input type="password" name="password" id="password" placeholder="•••••••••" required />
+
+        <div class="btn-group">
+          <button type="button" class="btn register" onclick="goToRegister()">สมัครสมาชิก</button>
+          <button type="submit" class="btn login">เข้าสู่ระบบ</button>
+        </div>
+      </form>
+
+      <p class="help-link">
+        <a href="#">เข้าสู่เว็บไซต์ในฐานะชมใช้งานทั่วไป</a>
+      </p>
+
+      <button type="button" class="btn back-home" onclick="goHome()">กลับไปหน้าหลัก</button>
+    </div>
+  </div>
+
+  <script>
+    function goToRegister() {
+      window.location.href = "register.html";
+    }
+    function goHome() {
+      window.location.href = "../View_products/View index.html";
+    }
+  </script>
+     <script src="get.user.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Football Store - Admin Dashboard</title>
+
+  <!-- ฟอนต์ไทยให้คม -->
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- ไอคอน -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <!-- สไตล์หลักของแดชบอร์ด -->
+  <link rel="stylesheet" href="Admin_index.css" />
+</head>
+<body>
+  <!-- ============ Sidebar ============ -->
+  <aside class="sidebar">
+    <h2>Football Store<br><span>Admin Panel</span></h2>
+
+    <div class="profile">
+      <img src="../uploads/Admin.jpg" alt="Admin">
+      <p id="adminProfileName">
+        ผู้ดูแลระบบ<br>
+        <small id="adminProfileEmail">กำลังโหลด...</small>
+      </p>
+    </div>
+
+    <ul>
+      <li class="active" id="dashboardMenu"><i class="fas fa-chart-line"></i> แดชบอร์ด</li>
+      <li id="productMenu"><i class="fas fa-box"></i> จัดการสินค้า</li>
+      <li id="paymentMenu"><i class="fas fa-credit-card"></i> การชำระเงิน</li>
+      <li id="reportMenu"><i class="fas fa-file-alt"></i> รายงาน</li>
+      <li id="profileMenu"><i class="fas fa-user"></i> ข้อมูลส่วนตัว</li>
+    </ul>
+
+    <button class="logout" onclick="location.href='../Admin/Admin.html'">
+      <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+    </button>
+  </aside>
+
+  <!-- ============ Main ============ -->
+  <main class="main-content">
+    <h1>แดชบอร์ด</h1>
+
+    <!-- KPI Cards -->
+    <section class="cards" style="margin-bottom:24px;">
+      <div class="card">
+        <h3>คำสั่งซื้อทั้งหมด</h3>
+        <p id="kpiTotalOrders">0</p>
+        <small>รวมทุกสถานะ</small>
+      </div>
+      <div class="card">
+        <h3>รอตรวจสอบ</h3>
+        <p id="kpiChecking">0</p>
+        <small>ชำระเงินสำเร็จรอการตรวจสอบ</small>
+      </div>
+      <div class="card">
+        <h3>ชำระเงินสมบูรณ์</h3>
+        <p id="kpiComplete">0</p>
+        <small>รอจัดส่ง</small>
+      </div>
+      <div class="card shipping">
+        <h3>เตรียมส่งสินค้าให้คุณแล้ว</h3>
+        <p id="kpiPrepare">0</p>
+        <small>เตรียมส่งสินค้า</small>
+      </div>
+    </section>
+
+    <section class="cards" style="grid-template-columns: repeat(2, 1fr); margin-bottom:24px;">
+      <div class="card">
+        <h3>รายรับรวม (ทั้งหมด)</h3>
+        <p id="kpiRevenueAll">฿17,988</p>
+        <small>เฉพาะคำสั่งซื้อที่นับเป็นรายรับ</small>
+      </div>
+      <div class="card">
+        <h3>รายรับเดือนนี้ (MTD)</h3>
+        <p id="kpiRevenueMTD">฿17,988</p>
+        <small>นับเฉพาะเดือนปัจจุบัน</small>
+      </div>
+    </section>
+
+    <hr style="margin:24px 0; border:0; border-top:1px solid #e7eaf1;">
+
+    <!-- Charts -->
+    <section class="content-row" style="margin-bottom:24px;">
+      <div class="box">
+        <h3><i class="fas fa-chart-line"></i> ยอดรวมออเดอร์รายเดือน (ปีปัจจุบัน)</h3>
+        <canvas id="chartMonthlyRevenue" height="120"></canvas>
+      </div>
+      <div class="box">
+        <h3><i class="fas fa-chart-pie"></i> คำสั่งซื้อแยกตามสถานะ</h3>
+        <canvas id="chartOrderStatus" height="120"></canvas>
+      </div>
+    </section>
+
+    <hr style="margin:24px 0; border:0; border-top:1px solid #e7eaf1;">5
+
+    <!-- Lists -->
+    <section class="content-row" style="margin-bottom:24px;">
+      <div class="box">
+        <h3><i class="fas fa-trophy"></i> Top 5 สินค้าขายดี</h3>
+        <ul id="topProductsList" style="margin:0; padding-left:0; list-style:none;">
+          <li style="margin-bottom:10px;"><strong>#1 Nike Tiempo Legend 10 Elite</strong><br>4 ชิ้น • ฿13,088</li>
+          <li style="margin-bottom:10px;"><strong>#2 Barcelona football shirt</strong><br>2 ชิ้น • ฿3,000</li>
+          <li style="margin-bottom:10px;"><strong>#3 Screensho</strong><br>1 ชิ้น • ฿1,800</li>
+          <li style="margin-bottom:10px;"><strong>#4 PANtTS GRAND SPORT</strong><br>1 ชิ้น • ฿100</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3><i class="fas fa-box"></i> สินค้าคงเหลือน้อย</h3>
+        <ul id="lowStockList" style="margin:0; padding-left:0; list-style:none;">
+          <li>Football F3N1000 <span style="color:#d92d20;">คงเหลือ: 3 ชิ้น</span></li>
+          <li>Thai football shirt <span style="color:#d92d20;">คงเหลือ: 3 ชิ้น</span></li>
+          <li>PANtTS GRAND SPORT <span style="color:#d92d20;">คงเหลือ: 3 ชิ้น</span></li>
+          <li>Nike football pants <span style="color:#d92d20;">คงเหลือ: 4 ชิ้น</span></li>
+          <li>socks <span style="color:#d92d20;">คงเหลือ: 5 ชิ้น</span></li>
+          <li>ADIDAS Copa Pure 3 Pro FG <span style="color:#d92d20;">คงเหลือ: 5 ชิ้น</span></li>
+          <li>soccer ball STRIKER <span style="color:#d92d20;">คงเหลือ: 5 ชิ้น</span></li>
+          <li>soccer ball NIKE <span style="color:#d92d20;">คงเหลือ: 5 ชิ้น</span></li>
+          <li>Adidas socks <span style="color:#d92d20;">คงเหลือ: 5 ชิ้น</span></li>
+          <li>gaiter adidas <span style="color:#d92d20;">คงเหลือ: 5 ชิ้น</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <hr style="margin:24px 0; border:0; border-top:1px solid #e7eaf1;">
+
+    <!-- Alerts -->
+    <section class="alert-box">
+      <h4><i class="fas fa-exclamation-circle"></i> การแจ้งเตือน</h4>
+      <ul id="alertList" style="font-size:16px;">
+        <li>โหลดข้อมูลจากฐานข้อมูลเรียบร้อย</li>
+        <li style="color:#d92d20;">
+          มีสินค้าคงเหลือน้อย: Football F3N1000 (3), Thai football shirt (3), PANtTS GRAND SPORT (3), Nike football pants (4), socks (5), ADIDAS Copa Pure 3 Pro FG (5), soccer ball STRIKER (5), soccer ball NIKE (5), Adidas socks (5), gaiter adidas (5)
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Logic -->
+  <script src="Admin_index.js"></script>
+  <script>
+    // ดึงข้อมูลโปรไฟล์แอดมินจากเซิร์ฟเวอร์
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch("../Admin/get_admin_profile.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById("adminProfileName").innerHTML = `${data.firstname || ''} ${data.lastname || ''}<br><small id="adminProfileEmail">${data.email || ''}</small>`;
+          }
+        });
+    });
+  </script>
+</body>
+</html>

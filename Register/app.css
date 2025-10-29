@@ -1,0 +1,120 @@
+body {
+  margin: 0;
+  font-family: 'Sarabun', sans-serif;
+  background: linear-gradient(135deg, #0d47a1, #004d40);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  max-width: 650px;
+  width: 100%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.8s ease;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #0d47a1;
+  border-bottom: 3px solid #0d47a1;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* ฟอร์ม */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* กรอบข้อมูล */
+fieldset {
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fafafa;
+}
+
+legend {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0d47a1;
+  padding: 0 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #004d40;
+  margin-bottom: 6px;
+}
+
+input, select {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 2px solid #cfd8dc;
+  font-size: 1rem;
+  background: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+  border-color: #0d47a1;
+  box-shadow: 0 0 8px rgba(13, 71, 161, 0.3);
+  background: #fff;
+}
+
+/* ปุ่ม */
+button {
+  background: linear-gradient(90deg, #004d40, #0d47a1);
+  color: #fff;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 10px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 77, 64, 0.35);
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.login-link a {
+  color: #0d47a1;
+  font-weight: bold;
+  text-decoration: none;
+}
+    .input-msg {
+      color: #d32f2f;
+      font-size: 0.95em;
+      margin-left: 2px;
+      display: block;
+    }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

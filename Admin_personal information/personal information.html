@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!-- filepath: c:\XAMPP\htdocs\STORE- Copy\Admin_personal information\personal information.html -->
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ข้อมูลส่วนตัว - Football Store</title>
+  <link rel="stylesheet" href="personal information.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="sidebar">
+    <h2>Football Store<br><span>Admin Panel</span></h2>
+    <div class="profile">
+      <img src="../uploads/Admin.jpg" alt="">
+      <p id="adminProfileName">
+        <span id="adminProfileText">ผู้ดูแลระบบ</span><br>
+        <small id="adminProfileEmail">กำลังโหลด...</small>
+      </p>
+    </div>
+    <ul>
+      <li id="dashboardMenu"><i class="fas fa-chart-line"></i> แดชบอร์ด</li>
+      <li id="productMenu"><i class="fas fa-box"></i> จัดการสินค้า</li>
+      <li id="paymentMenu"><i class="fas fa-credit-card"></i> การชำระเงิน</li>
+      <li id="reportMenu"><i class="fas fa-file-alt"></i> รายงาน</li>
+      <li class="active"><i class="fas fa-user"></i> ข้อมูลส่วนตัว</li>
+    </ul>
+    <button class="logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</button>
+  </div>
+ <div class="main-content">
+  <h1><i class="fas fa-user"></i> ข้อมูลส่วนตัว</h1>
+  
+
+  <div class="profile-box">
+    <!-- ฟอร์มข้อมูลส่วนตัว -->
+   <!-- ฟอร์มข้อมูลส่วนตัว -->
+<h2><i class="fas fa-id-card"></i> ข้อมูลส่วนตัว</h2>
+<form id="adminProfileForm">
+    <label>ชื่อ</label>
+    <input type="text" id="adminFirstName" name="firstname" value="พีระพงษ์" disabled required>
+
+    <label>นามสกุล</label>
+    <input type="text" id="adminLastName" name="lastname" value="เทพประสิทธิ์" disabled required>
+
+    <label>อีเมล์</label>
+    <input type="email" id="adminEmail" name="email" value="peeraphong.te@ku.com" disabled required>
+
+  <!-- ปุ่ม -->
+  <div id="profileButtons">
+    <button type="button" id="editBtn" class="btn save"><i class="fas fa-edit"></i> แก้ไขข้อมูล</button>
+  </div>
+  <span id="profileMsg" class="msg"></span>
+</form>
+
+    <hr class="section-divider">
+
+    <!-- ฟอร์มเปลี่ยนรหัสผ่าน -->
+    <h2><i class="fas fa-lock"></i> เปลี่ยนรหัสผ่าน</h2>
+    <form id="adminPasswordForm">
+      <label>รหัสผ่านปัจจุบัน</label>
+      <input type="password" id="currentPassword" placeholder="กรอกรหัสผ่านปัจจุบัน" required>
+
+      <label>รหัสผ่านใหม่</label>
+      <input type="password" id="newPassword" placeholder="กรอกรหัสผ่านใหม่" required>
+
+      <label>ยืนยันรหัสผ่านใหม่</label>
+      <input type="password" id="confirmPassword" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" required>
+
+      <button type="submit" class="btn password"><i class="fas fa-key"></i> เปลี่ยนรหัสผ่าน</button>
+      <span id="passwordMsg" class="msg"></span>
+    </form>
+  </div>
+  
+  </div>
+  <script>
+ 
+  </script>
+    <script>
+    // อัปเดตข้อมูลโปรไฟล์ admin
+    document.getElementById("adminProfileForm").onsubmit = function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      fetch("update_admin_profile.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const msg = document.getElementById("profileMsg");
+        msg.textContent = data.message;
+        msg.style.color = data.success ? "green" : "red";
+        // อัปเดต sessionStorage (ถ้ามี)
+        if (data.success) {
+          sessionStorage.setItem("admin_firstname", document.getElementById("adminFirstName").value);
+          sessionStorage.setItem("admin_lastname", document.getElementById("adminLastName").value);
+          sessionStorage.setItem("admin_email", document.getElementById("adminEmail").value);
+        }
+      });
+    };
+
+    // เปลี่ยนรหัสผ่าน
+    document.getElementById("adminPasswordForm").onsubmit = function(e) {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append("current_password", document.getElementById("currentPassword").value);
+      formData.append("new_password", document.getElementById("newPassword").value);
+      formData.append("confirm_password", document.getElementById("confirmPassword").value);
+      fetch("change_admin_password.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const msg = document.getElementById("passwordMsg");
+        msg.textContent = data.message;
+        msg.style.color = data.success ? "green" : "red";
+        if (data.success) {
+          document.getElementById("adminPasswordForm").reset();
+        }
+      });
+    };
+
+    // เพิ่มฟังก์ชันออกจากระบบ
+    document.getElementById("logoutBtn").onclick = function() {
+      window.location.href = "../Admin/Admin.html";
+    };
+
+    // ดึงข้อมูลโปรไฟล์แอดมินจากเซิร์ฟเวอร์
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch("../Admin/get_admin_profile.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById("adminProfileText").textContent = `${data.firstname || ''} ${data.lastname || ''}`;
+            document.getElementById("adminProfileEmail").textContent = data.email || '';
+            document.getElementById("adminFirstName").value = data.firstname || '';
+            document.getElementById("adminLastName").value = data.lastname || '';
+            document.getElementById("adminEmail").value = data.email || '';
+          }
+        });
+    });
+  </script>
+  <script>
+  
+      // Sidebar menu navigation (แก้ไขให้รันหลัง DOM โหลดเสร็จ)
+      const dashboardMenu = document.getElementById("dashboardMenu");
+      const productMenu = document.getElementById("productMenu");
+      const paymentMenu = document.getElementById("paymentMenu");
+      const reportMenu = document.getElementById("reportMenu");
+      const profileMenu = document.getElementById("profileMenu");
+
+      if (dashboardMenu) dashboardMenu.onclick = function() {
+        window.location.href = "../Admin_index/Admin_index.html";
+      };
+      if (productMenu) productMenu.onclick = function() {
+        window.location.href = "../admin_products/admin_products.html";
+      };
+      if (paymentMenu) paymentMenu.onclick = function() {
+        window.location.href = "../Admin_Payment/Admin_Payment.html";
+      };
+      if (reportMenu) reportMenu.onclick = function() {
+        window.location.href = "../Admin_report/Admin_report.html";
+      };
+      if (profileMenu) profileMenu.onclick = function() {
+        window.location.href = "../Admin_personal information/personal information.html";
+      };
+</script>
+   <script src="Administrator profile.js"></script>
+</body>
+</html>

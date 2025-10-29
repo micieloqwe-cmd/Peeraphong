@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>จัดการสินค้า - Football Store</title>
+  <link rel="stylesheet" href="admin_products.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>⚽ Football Store<br><span>Admin Panel</span></h2>
+    <div class="profile">
+      <img src="../uploads/Admin.jpg" alt="Admin">
+      <p id="adminProfileName">
+        ผู้ดูแลระบบ<br>
+        <small id="adminProfileEmail">admin@test.com</small>
+      </p>
+    </div>
+    <ul class="menu">
+      <li id="dashboardMenu"><i class="fas fa-chart-line"></i> แดชบอร์ด</li>
+      <li class="active"><i class="fas fa-box"></i> จัดการสินค้า</li>
+      <li id="paymentMenu"><i class="fas fa-credit-card"></i> การชำระเงิน</li>
+      <li id="reportMenu"><i class="fas fa-file-alt"></i> รายงาน</li>
+      <li id="profileMenu"><i class="fas fa-user"></i> ข้อมูลส่วนตัว</li>
+    </ul>
+    <button class="logout"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1>จัดการสินค้า</h1>
+      <p class="subtitle">ระบบจัดการสินค้าอุปกรณ์ฟุตบอลสำหรับผู้ดูแล</p>
+    </div>
+
+    <div class="top-actions">
+      <input type="text" id="searchInput" placeholder="ค้นหาชื่อสินค้า หรือยี่ห้อ...">
+      <select id="categorySelect">
+        <option value="">ทุกประเภท</option>
+        <option>ลูกฟุตบอล</option>
+        <option>รองเท้าสตั๊ต</option>
+        <option>กางเกงบอล</option>
+        <option>ถุงเท้ายาว</option>
+        <option>สนับแข้ง</option>
+        <option>เสื้อบอล</option>
+      </select>
+      <button id="addProductBtn" class="btn add">
+        <i class="fas fa-plus"></i> เพิ่มสินค้า
+      </button>
+    </div>
+
+    <!-- Product List -->
+    <div id="productList" class="product-grid">
+      <!-- สินค้าจะถูกโหลดโดย JS -->
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModalBtn">&times;</span>
+      <h2 id="modalTitle">เพิ่มสินค้าใหม่</h2>
+      <p class="subtitle">กรอกข้อมูลสินค้าที่ต้องการเพิ่ม</p>
+      <form id="productForm" enctype="multipart/form-data">
+        <input type="hidden" id="modalProductId" name="product_id">
+        <label for="modalProductName">ชื่อสินค้า</label>
+        <input type="text" name="product_name" id="modalProductName" required>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="modalBrand">ยี่ห้อ</label>
+            <input type="text" name="brand" id="modalBrand">
+          </div>
+          <div class="form-group">
+            <label for="modalCategory">ประเภท</label>
+            <select name="category_id" id="modalCategory" required>
+              <option value="">เลือกประเภท</option>
+              <option value="1">ลูกฟุตบอล</option>
+              <option value="2">รองเท้าสตั๊ต</option>
+              <option value="3">กางเกงบอล</option>
+              <option value="4">ถุงเท้ายาว</option>
+              <option value="5">สนับแข้ง</option>
+              <option value="6">เสื้อบอล</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="modalPrice">ราคา (บาท)</label>
+            <input type="number" name="price" id="modalPrice" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="modalStock">จำนวนสต็อก</label>
+            <input type="number" name="stock" id="modalStock" min="0" required>
+          </div>
+        </div>
+        <label for="modalImage">รูปภาพ</label>
+        <input type="file" name="image" id="modalImage">
+        <div id="modalPreview"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn cancel" id="cancelBtn">ยกเลิก</button>
+          <button type="submit" class="btn save">
+            <i class="fas fa-save"></i> <span id="modalSaveText">เพิ่มสินค้า</span>
+          </button>
+        </div>
+        <span id="modalMsg" class="msg"></span>
+      </form>
+    </div>
+  </div>
+
+  <script src="admin_products.js"></script>
+  <script>
+    // ดึงชื่อ-นามสกุล-อีเมล admin จาก sessionStorage (หลัง login)
+    document.addEventListener("DOMContentLoaded", function() {
+      const fname = sessionStorage.getItem("admin_firstname") || "ผู้ดูแลระบบ";
+      const lname = sessionStorage.getItem("admin_lastname") || "";
+      const email = sessionStorage.getItem("admin_email") || "admin@test.com";
+      document.getElementById("adminProfileName").innerHTML = `${fname} ${lname}<br><small id="adminProfileEmail">${email}</small>`;
+
+      // Sidebar menu navigation (แก้ไขให้รันหลัง DOM โหลดเสร็จ)
+      const dashboardMenu = document.getElementById("dashboardMenu");
+      const productMenu = document.getElementById("productMenu");
+      const paymentMenu = document.getElementById("paymentMenu");
+      const reportMenu = document.getElementById("reportMenu");
+      const profileMenu = document.getElementById("profileMenu");
+
+      if (dashboardMenu) dashboardMenu.onclick = function() {
+        window.location.href = "../Admin_index/Admin_index.html";
+      };
+      if (productMenu) productMenu.onclick = function() {
+        window.location.href = "../admin_products/admin_products.html";
+      };
+      if (paymentMenu) paymentMenu.onclick = function() {
+        window.location.href = "../Admin_Payment/Admin_Payment.html";
+      };
+      if (reportMenu) reportMenu.onclick = function() {
+        window.location.href = "../Admin_report/Admin_report.html";
+      };
+      if (profileMenu) profileMenu.onclick = function() {
+        window.location.href = "../Admin_personal information/personal information.html";
+      };
+    });
+  </script>
+</body>
+</html>

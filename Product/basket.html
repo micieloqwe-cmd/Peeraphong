@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตะกร้าสินค้า | Football Store</title>
+  <link rel="stylesheet" href="basket.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo-section">
+      <img src="../uploads/h0-Photoroom.jpg" alt="Logo" class="logo-icon" />
+      <h1>Football Store</h1>
+    </div>
+
+    <div class="nav-links">
+      <a href="../index/index.html"><i class="fas fa-home"></i> หน้าหลัก</a>
+      <a href="../Product/basket.html" class="active"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
+      <a href="../order-history/order-history.html"><i class="fas fa-receipt"></i> ประวัติการสั่งซื้อ</a>
+    </div>
+
+    <!-- โปรไฟล์ผู้ใช้ -->
+    <div class="profile-section">
+      <img src="../uploads/iconprofile.jpg" alt="โปรไฟล์" id="profileIcon" class="profile-icon" />
+      <div class="dropdown" id="profileDropdown">
+        <div class="profile-info">
+          <img id="userImg" src="../uploads/iconprofile.jpg" alt="User Image" />
+          <h4 id="userFullname">กำลังโหลด...</h4>
+          <p id="userEmail">กำลังโหลด...</p>
+        </div>
+        <div class="profile-buttons">
+          <button class="edit-btn" onclick="window.location.href='../Edit_profile/edit_profile.html'">
+            <i class="fas fa-user-edit"></i> แก้ไขข้อมูลส่วนตัว
+          </button>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="product-container">
+    <h2><i class="fas fa-shopping-cart"></i> รายการสินค้าในตะกร้า</h2>
+    <div id="cartContainer"></div>
+    <div class="total" id="cartTotal"></div>
+    <div class="action">
+      <button id="orderBtn" class="order-btn">
+        <i class="fas fa-credit-card"></i> ดำเนินการสั่งซื้อ
+      </button>
+    </div>
+  </main>
+
+
+  <script>
+    const profileIcon = document.getElementById("profileIcon");
+    const profileDropdown = document.getElementById("profileDropdown");
+
+    profileIcon.addEventListener("click", () => {
+      profileDropdown.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!profileDropdown.contains(e.target) && e.target !== profileIcon) {
+        profileDropdown.classList.remove("show");
+      }
+    });
+
+    function logout() {
+      alert("ออกจากระบบเรียบร้อยแล้ว");
+      window.location.href = "../Login/Login.html";
+    }
+
+    // โหลดข้อมูลสินค้าในตะกร้าจาก localStorage และเติมข้อมูลจาก database
+    function renderCart() {
+      const container = document.getElementById("cartContainer");
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (cart.length === 0) {
+        container.innerHTML = `<div class="empty"><i class="fas fa-box-open"></i> ไม่มีสินค้าในตะกร้า</div>`;
+        document.getElementById("cartTotal").textContent = "";
+        return;
+      }
+      // ดึงข้อมูลสินค้าใหม่จาก database เพื่ออัปเดตราคา/สต็อกล่าสุด
+      fetch("../index/get_products.php")
+        .then(res => res.text())
+        .then(raw => {
+          try {
+            const data = JSON.parse(raw);
+            const products = data.products || [];
+            let total = 0;
+            let html = `<table class="cart-table">
+              <tr>
+                <th>รูปภาพ</th>
+                <th>สินค้า</th>
+                <th>ราคา</th>
+                <th>จำนวน</th>
+                <th>คงเหลือ</th>
+                <th>รวม</th>
+                <th>ลบ</th>
+              </tr>`;
+            cart.forEach((item, index) => {
+              const prod = products.find(p => String(p.product_id) === String(item.id));
+              const price = prod ? Number(prod.price) : item.price;
+              const stock = prod ? Number(prod.stock) : item.qty;
+              const sum = price * item.qty;
+              total += sum;
+              html += `
+                <tr>
+                  <td><img src="../${item.image}" class="cart-img" /></td>
+                  <td>${item.name}</td>
+                  <td>${price.toLocaleString()} บาท</td>
+                  <td>
+                    <button class="qty-btn" onclick="updateQty(${index},-1,${stock})">−</button>
+                    <span class="qty-text">${item.qty}</span>
+                    <button class="qty-btn" onclick="updateQty(${index},1,${stock})">+</button>
+                  </td>
+                  <td><span style="color:#16a34a;font-weight:700">${stock}</span></td>
+                  <td>${sum.toLocaleString()} บาท</td>
+                  <td><button class="remove-btn" onclick="removeItem(${index})"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+            });
+            html += `</table>`;
+            container.innerHTML = html;
+            document.getElementById("cartTotal").textContent = `รวมทั้งหมด: ${total.toLocaleString()} บาท`;
+          } catch (e) {
+            console.error("get_products ตอบกลับไม่ใช่ JSON:", raw);
+            container.innerHTML = `<div class="empty error"><i class="fas fa-exclamation-triangle"></i> เกิดปัญหาในการโหลดข้อมูลสินค้า</div>`;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          container.innerHTML = `<div class="empty error"><i class="fas fa-exclamation-triangle"></i> ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้</div>`;
+        });
+    }
+
+    function updateQty(index, delta, maxStock) {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      let newQty = cart[index].qty + delta;
+      if (newQty < 1) newQty = 1;
+      if (newQty > maxStock) newQty = maxStock;
+      cart[index].qty = newQty;
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    // ดึงข้อมูลโปรไฟล์ผู้ใช้จาก database
+    window.addEventListener("DOMContentLoaded", () => {
+      fetch('../index/check_login.php')
+        .then(res => res.text())
+        .then(raw => {
+          try {
+            const user = JSON.parse(raw);
+            if (!user.loggedIn) {
+              alert("กรุณาเข้าสู่ระบบ");
+              window.location.href = "../main/house.html";
+              return;
+            }
+            document.getElementById("userFullname").textContent = `${user.firstname || ''} ${user.lastname || ''}`;
+            document.getElementById("userEmail").textContent = user.email || '';
+            document.getElementById("userImg").src = "../uploads/iconprofile.jpg";
+            document.getElementById("profileIcon").src = "../uploads/iconprofile.jpg";
+          } catch (e) {
+            console.error("check_login ตอบกลับไม่ใช่ JSON:", raw);
+            alert("เกิดปัญหาในการดึงข้อมูลผู้ใช้จากเซิร์ฟเวอร์");
+            window.location.href = "../main/house.html";
+          }
+        })
+        .catch(err => { 
+          console.error(err);
+          alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+          window.location.href = "../main/house.html";
+        });
+    });
+
+    document.getElementById('orderBtn').onclick = async function () {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (cart.length === 0) {
+        alert("ไม่มีสินค้าในตะกร้า");
+        return;
+      }
+
+      // เตรียมข้อมูลผู้ใช้และยอดรวม
+      const userEmail = document.getElementById("userEmail").textContent || "";
+      const fullname = document.getElementById("userFullname").textContent.split(" ");
+      const firstname = fullname[0] || "";
+      const lastname = fullname[1] || "";
+      const totalAmount = cart.reduce((sum, it) => sum + (Number(it.price || 0) * Number(it.qty || 1)), 0);
+
+      try {
+        // 1) สร้าง order (คืน order_number + expire_at)
+        const resCreate = await fetch("../Order products/Order.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "create_order", total: totalAmount })
+        });
+        const createData = await resCreate.json();
+        if (createData.status !== "success" && !createData.order_number) {
+          alert("ไม่สามารถสร้างคำสั่งซื้อได้: " + (createData.message || "unknown"));
+          return;
+        }
+        const order_number = createData.order_number || createData.order_number;
+        const expire_at = createData.expire_at || null;
+        // เก็บ order info ให้หน้า Order products ใช้ต่อ
+        localStorage.setItem("order_number", order_number);
+        if (expire_at) localStorage.setItem("expire_at", expire_at);
+
+        // 2) สำรอง/ตัดสต็อก
+        const resReserve = await fetch("../Order products/Order.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "reserve_stock", items: cart })
+        });
+        const reserveData = await resReserve.json();
+        if (reserveData.status !== "success") {
+          // ถ้าสำรองสต็อกล้มเหลว ให้ยกเลิก order ที่สร้างขึ้น
+          await fetch("../Order products/Order.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "cancel_by_system", order_number, items: cart })
+          }).catch(()=>{});
+          alert("ตัดสต็อกไม่สำเร็จ: " + (reserveData.message || "สต็อกไม่พอ"));
+          return;
+        }
+
+        // เก็บรายการและข้อมูลผู้ใช้ เพื่อให้หน้า Order products แสดง
+        localStorage.setItem("order_items", JSON.stringify(cart));
+        localStorage.setItem("userEmail", userEmail);
+        localStorage.setItem("userName", `${firstname} ${lastname}`.trim());
+
+        // ไปหน้าชำระเงิน / ยืนยันคำสั่งซื้อ
+        window.location.href = "../Order products/Order products.html";
+      } catch (err) {
+        console.error(err);
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+      }
+    };
+
+    window.onload = () => renderCart();
+  </script>
+</body>
+</html>

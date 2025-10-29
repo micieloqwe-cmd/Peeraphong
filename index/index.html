@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Football Store</title>
+  <link rel="stylesheet" href="indexx.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="../uploads/h0-Photoroom.jpg" alt="logo">
+      <span>Football Store</span>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="ค้นหาชื่อรุ่นหรือยี่ห้อ...">
+      <button class="nav-search-btn" id="searchBtn"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="nav-links">
+      <a href="../index/index.html"><i class="fas fa-home"></i> หน้าหลัก</a>
+      <a href="../Product/basket.html"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
+      <a href="../order-history/order-history.html"><i class="fas fa-receipt"></i> ประวัติการสั่งซื้อ</a>
+    </div>
+    <div class="profile-section">
+      <img src="../uploads/iconprofile.jpg" alt="โปรไฟล์" class="profile-icon" id="profileIcon" />
+      <div class="dropdown" id="profileDropdown">
+        <div class="profile-info">
+          <h4><i class="fas fa-user-circle"></i> ข้อมูลส่วนตัว</h4>
+          <img id="userImg" src="../uploads/iconprofile.jpg" alt="โปรไฟล์ผู้ใช้">
+          <p id="userFullname"><i class="fas fa-user"></i> กำลังโหลด...</p>
+          <p id="userEmail"><i class="fas fa-envelope"></i> กำลังโหลด...</p>
+        </div>
+        <button onclick="window.location.href='../Edit_profile/edit_profile.html'">
+          <i class="fas fa-edit"></i> แก้ไขข้อมูลส่วนตัว
+        </button>
+        <button onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Categories -->
+  <main>
+    <section class="categories">
+      <h2>ประเภทอุปกรณ์ฟุตบอล</h2>
+      <div class="category-icons" id="categoryIcons"></div>
+    </section>
+
+    <!-- Products -->
+    <section class="products">
+      <h3>สินค้า</h3>
+      <div class="product-list" id="productList"></div>
+      <div class="more-button">
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <h4>⚽ Football Store</h4>
+    <p>ร้านขายอุปกรณ์ฟุตบอลครบวงจร</p>
+    <div class="social-icons">
+      <!-- ใส่ social icons ได้ที่นี่ -->
+    </div>
+    <p style="margin-top:10px; font-size:13px;">© 2025 Football Store. All rights reserved.</p>
+  </footer>
+
+  <script>
+
+    // ================= โปรไฟล์  =================
+    const profileIcon = document.getElementById("profileIcon");
+    const profileDropdown = document.getElementById("profileDropdown");
+
+    profileIcon.addEventListener("click", () => {
+      const isShown = profileDropdown.classList.toggle("show");
+      profileIcon.setAttribute("aria-expanded", isShown);
+    });
+
+    document.addEventListener("click", e => {
+      if (!profileDropdown.contains(e.target) && e.target !== profileIcon) {
+        profileDropdown.classList.remove("show");
+        profileIcon.setAttribute("aria-expanded", false);
+      }
+    });
+
+    function logout() { window.location.href = '../Login/Login.html'; }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      fetch('check_login.php')
+        .then(res => res.json())
+        .then(user => {
+          if (!user.loggedIn) {
+            alert("กรุณาเข้าสู่ระบบ");
+            window.location.href = "../main/house.html";
+            return;
+          }
+          document.getElementById("userFullname").innerHTML = `<i class="fas fa-user"></i> ${user.firstname || ''} ${user.lastname || ''}`;
+          document.getElementById("userEmail").innerHTML = `<i class="fas fa-envelope"></i> ${user.email || 'ไม่มีอีเมล'}`;
+          document.getElementById("userImg").src = "../uploads/iconprofile.jpg";
+          document.getElementById("profileIcon").src = "../uploads/iconprofile.jpg";
+        })
+        .catch(err => { console.error(err); alert("เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้"); });
+    });
+
+    let allProducts = [];
+
+    // ================= โหลดหมวดหมู่สินค้าและสินค้า =================
+    fetch('get_products.php')
+      .then(async res => {
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          alert("เกิดข้อผิดพลาดในการโหลดข้อมูลสินค้า/หมวดหมู่");
+          console.error("JSON parse error:", text);
+          return;
+        }
+        // หมวดหมู่
+        const catContainer = document.getElementById('categoryIcons');
+        catContainer.innerHTML = "";
+        if (data.categories) {
+          data.categories.forEach(cat => {
+            const imgSrc = cat.image ? `../${cat.image}` : "../uploads/placeholder.png";
+            const div = document.createElement('div');
+            div.innerHTML = `
+              <img src="${imgSrc}" alt="${cat.category_name}">
+              <div>${cat.category_name}</div>
+            `;
+            div.style.cursor = "pointer";
+            div.addEventListener('click', () => {
+              window.location.href = `category.html?cat=${cat.category_id}`;
+            });
+            catContainer.appendChild(div);
+          });
+        }
+        // สินค้า
+        allProducts = data.products || [];
+        renderProducts(allProducts);
+      })
+      .catch(err => {
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+        console.error(err);
+      });
+
+    // ฟังก์ชันแสดงสินค้า
+    function renderProducts(products) {
+      const container = document.getElementById('productList');
+      container.innerHTML = "";
+      products.forEach(p => {
+        const stockBadge = `<div style="position:absolute;top:10px;right:10px;background:#16a34a;color:#fff;padding:4px 12px;border-radius:12px;font-size:0.95rem;font-weight:700;box-shadow:0 2px 8px rgba(13,71,161,0.12);">คงเหลือ ${p.stock}</div>`;
+        const div = document.createElement('div');
+        div.className = 'product-card';
+        div.style.position = "relative";
+        div.innerHTML = `
+          ${stockBadge}
+          <img src="../${p.image}" alt="${p.product_name}" style="cursor:pointer" onclick="viewProduct(${p.product_id})">
+          <h4 style="cursor:pointer" onclick="viewProduct(${p.product_id})">${p.product_name}</h4>
+          <p>${Number(p.price).toLocaleString()} บาท</p>
+          <button class="view-detail" onclick="viewProduct(${p.product_id})">ดูรายละเอียดสินค้า</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function viewProduct(id) {
+      window.location.href = `../Product/product.html?product_id=${id}`;
+    }
+
+    function openBasket() {
+      window.location.href = "../Product/basket.html";
+    }
+
+    // ฟังก์ชันค้นหา
+    function searchProducts() {
+      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!keyword) {
+        renderProducts(allProducts);
+        return;
+      }
+      const filtered = allProducts.filter(p =>
+        (p.product_name && p.product_name.toLowerCase().includes(keyword)) ||
+        (p.brand && p.brand.toLowerCase().includes(keyword))
+      );
+      renderProducts(filtered);
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', searchProducts);
+    document.getElementById('searchInput').addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') searchProducts();
+      if (!this.value) renderProducts(allProducts);
+    });
+  </script>
+  <script src="index.js"></script>
+</body>
+</html>

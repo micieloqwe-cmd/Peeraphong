@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <title>หมวดหมู่สินค้า | Football Store</title>
+  <link rel="stylesheet" href="View category.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="../uploads/h0-Photoroom.jpg" alt="logo">
+      <span>Football Store</span>
+    </div>
+    <div class="nav-links">
+      <a href="View index.html"><i class="fas fa-home"></i> หน้าหลัก</a>
+      <a href="#" id="guestCartBtn"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
+      <a href="#" id="guestHistoryBtn"><i class="fas fa-receipt"></i> ประวัติการสั่งซื้อ</a>
+      <!-- ลบปุ่มเข้าสู่ระบบและสมัครสมาชิกออก -->
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="../index/index.html">หน้าหลัก</a> <span>></span>
+    <span id="breadcrumbCategory">หมวดหมู่</span>
+  </div>
+
+  <!-- Title -->
+  <div class="category-title" id="categoryTitle">กำลังโหลด...</div>
+
+  <!-- Products -->
+  <div class="product-list" id="productList"></div>
+
+  <!-- Footer -->
+  <footer>
+    <h4>Football Store</h4>
+    <p>ร้านขายอุปกรณ์ฟุตบอลครบวงจร ⚽</p>
+    <div class="social-icons">
+    </div>
+    <p style="margin-top:10px; font-size:13px;">© 2025 Football Store. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // ============= JS ดึงข้อมูลหมวดหมู่ =============
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+    const catId = getQueryParam('cat');
+
+    let allCategories = [];
+    let allProducts = [];
+
+    // ดึงข้อมูลจาก View get_products.php (ดึงจาก database)
+    fetch('View get_products.php')
+      .then(async res => {
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+          return;
+        }
+        allCategories = data.categories || [];
+        allProducts = data.products || [];
+
+        // หาชื่อหมวดหมู่
+        const catObj = allCategories.find(c => String(c.category_id) === String(catId));
+        document.getElementById('categoryTitle').textContent = catObj ? catObj.category_name : "ไม่พบหมวดหมู่";
+        document.getElementById('breadcrumbCategory').textContent = catObj ? catObj.category_name : "ไม่พบหมวดหมู่";
+
+        // กรองสินค้า
+        const filtered = allProducts.filter(p => String(p.category_id) === String(catId));
+        renderProducts(filtered);
+      });
+
+    function renderProducts(products) {
+      const container = document.getElementById('productList');
+      container.innerHTML = "";
+      if (products.length === 0) {
+        container.innerHTML = "<div class='no-product'>ไม่มีสินค้าในหมวดหมู่นี้</div>";
+        return;
+      }
+      products.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'product-card';
+        div.innerHTML = `
+          <img src="../${p.image}" alt="${p.product_name}" onclick="viewProduct(${p.product_id})">
+          <h4 onclick="viewProduct(${p.product_id})">${p.product_name}</h4>
+          <p>${Number(p.price).toLocaleString()} บาท</p>
+          <button onclick="viewProduct(${p.product_id})">ดูรายละเอียดสินค้า</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function viewProduct(id) {
+      alert("กรุณาสมัครสมาชิกหรือเข้าสู่ระบบก่อนใช้งานฟังก์ชันนี้");
+      window.location.href = "../Register/apply.html";
+    }
+
+    document.getElementById('guestCartBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      alert("กรุณาสมัครสมาชิกหรือเข้าสู่ระบบก่อนใช้งานตะกร้าสินค้า");
+      window.location.href = "../Register/apply.html";
+    });
+    document.getElementById('guestHistoryBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      alert("กรุณาสมัครสมาชิกหรือเข้าสู่ระบบก่อนใช้งานประวัติการสั่งซื้อ");
+      window.location.href = "../Register/apply.html";
+    });
+  </script>
+</body>
+</html>

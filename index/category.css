@@ -1,0 +1,282 @@
+body {
+  margin: 0;
+  font-family: "Kanit", "Poppins", sans-serif;
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #004d40, #0d47a1);
+  padding: 12px 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 600;
+}
+.logo img {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* กลุ่มเมนู + โปรไฟล์ */
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+/* เมนู */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nav-links a {
+  color: #fff;
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 16px;
+  transition: 0.3s;
+}
+.nav-links a:hover {
+  color: #ffc107;
+  text-decoration: underline;
+}
+
+/* โปรไฟล์ผู้ใช้ dropdown */
+.profile-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid #0d47a1;
+  box-shadow: 0 2px 8px rgba(13,71,161,0.12);
+  transition: box-shadow 0.2s;
+}
+
+.profile-icon:hover {
+  box-shadow: 0 4px 16px rgba(13,71,161,0.18);
+}
+
+/* Dropdown */
+.dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 60px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(13,71,161,0.13);
+  padding: 26px 18px;
+  width: 265px;
+  text-align: center;
+  z-index: 100;
+  animation: fadeIn 0.3s;
+}
+.dropdown.show {
+  display: block;
+}
+.dropdown img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-top: 10px;
+  border: 3px solid #0d47a1;
+}
+.profile-info h4 {
+  color: #0d47a1;
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.profile-info img,
+#userImg {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  margin: 10px 0;
+  box-shadow: 0 2px 8px rgba(13,71,161,0.12);
+  border: 2px solid #0d47a1;
+}
+
+#userFullname {
+  font-size: 1.08rem;
+  color: #004d40;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+#userEmail {
+  font-size: 1.05rem;
+  color: #1565c0;
+  margin-bottom: 8px;
+}
+.dropdown button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px 0;
+  background: linear-gradient(90deg, #004d40, #0d47a1);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.2s, transform 0.2s;
+}
+.dropdown button:hover {
+  background: #1b5e20;
+  transform: translateY(-2px);
+}
+.dropdown button:last-child {
+  background: linear-gradient(90deg, #e53935, #b71c1c);
+}
+.dropdown button:last-child:hover {
+  background: #b71c1c;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  margin: 20px 40px;
+  font-size: 15px;
+  color: #555;
+}
+.breadcrumb a {
+  text-decoration: none;
+  color: #0d47a1;
+  font-weight: 600;
+}
+.breadcrumb span {
+  margin: 0 6px;
+}
+
+/* หัวข้อหมวดหมู่ */
+.category-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0d47a1;
+  margin: 25px 0 30px;
+  text-align: center;
+}
+
+/* รายการสินค้า */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 30px;
+  padding: 0 40px 60px;
+}
+
+/* การ์ดสินค้า */
+.product-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+.product-card img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 15px;
+}
+.product-card h4 {
+  margin: 12px 0;
+  font-size: 20px;
+  color: #004d40;
+}
+.product-card p {
+  color: #0d47a1;
+  font-weight: bold;
+  font-size: 18px;
+}
+.product-card button {
+  background: linear-gradient(90deg, #004d40, #0d47a1);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.product-card button:hover {
+  background: #1b5e20;
+  transform: scale(1.05);
+}
+
+/* ป้ายสต็อก */
+.stock-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #16a34a;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(90deg, #004d40, #0d47a1);
+  color: #fff;
+  padding: 30px 20px;
+  text-align: center;
+  border-radius: 18px 18px 0 0;
+  margin-top: 40px;
+}
+footer h4 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+footer p {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

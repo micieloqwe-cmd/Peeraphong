@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ประวัติการสั่งซื้อ | Football Store</title>
+  <link rel="stylesheet" href="order-history.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2e0b2df3a.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- 🔹 แถบเมนูด้านบน -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="../uploads/h0-Photoroom.jpg" alt="Football Logo">
+      <span>Football Store</span>
+    </div>
+
+    <nav>
+      <a href="../index/index.html">หน้าหลัก</a>
+      <a href="../Product/basket.html">ตะกร้า</a>
+      <a href="order-history.html" class="active">ประวัติการสั่งซื้อ</a>
+    </nav>
+
+    <div class="profile-section">
+      <img src="../uploads/iconprofile.jpg" alt="โปรไฟล์" id="profileIcon" class="profile-icon" />
+      <div class="dropdown" id="profileDropdown">
+        <div class="profile-info">
+          <img id="userImg" src="../uploads/iconprofile.jpg" alt="User Image" />
+          <h4 id="userFullname">กำลังโหลด...</h4>
+          <p id="userEmail">กำลังโหลด...</p>
+        </div>
+        <div class="profile-buttons">
+          <button class="edit-btn" onclick="window.location.href='../Edit_profile/edit_profile.html'">
+            <i class="fas fa-user-edit"></i> แก้ไขข้อมูลส่วนตัว
+          </button>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 🔹 เนื้อหาหลัก -->
+  <div class="container">
+    <h1>🛍️ ประวัติการสั่งซื้อสินค้า</h1>
+    <div id="ordersContainer"></div>
+  </div>
+  <script>
+    const profileIcon = document.getElementById("profileIcon");
+    const profileDropdown = document.getElementById("profileDropdown");
+
+    profileIcon.addEventListener("click", () => {
+      profileDropdown.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!profileDropdown.contains(e.target) && e.target !== profileIcon) {
+        profileDropdown.classList.remove("show");
+      }
+    });
+
+    // ดึงข้อมูลโปรไฟล์จาก database
+    window.addEventListener("DOMContentLoaded", () => {
+      fetch('../index/check_login.php')
+        .then(res => res.json())
+        .then(user => {
+          if (!user.loggedIn) {
+            document.getElementById("userFullname").textContent = "กรุณาเข้าสู่ระบบ";
+            document.getElementById("userEmail").textContent = "";
+            return;
+          }
+          document.getElementById("userFullname").textContent = `${user.firstname} ${user.lastname}`;
+          document.getElementById("userEmail").textContent = user.email;
+          document.getElementById("userImg").src = "../uploads/iconprofile.jpg";
+          document.getElementById("profileIcon").src = "../uploads/iconprofile.jpg";
+          // ดึงข้อมูลประวัติการชำระเงิน (payments)
+          fetch('order-history.php')
+            .then(res => res.json())
+            .then(data => {
+              const orders = data.orders || [];
+              const container = document.getElementById("ordersContainer");
+              if (!orders.length) {
+                container.innerHTML = "<div style='text-align:center;color:#888;padding:40px;'>ไม่มีประวัติการชำระเงิน</div>";
+                return;
+              }
+              container.innerHTML = orders.map(order => {
+                // กำหนดสีสถานะ
+                let statusClass = "";
+                if (order.status === "ชำระเงินสมบูรณ์รอจัดส่ง") statusClass = "status-success";
+                else if (order.status && order.status.includes("ยกเลิก")) statusClass = "status-cancel";
+                return `
+                <div class="order-card">
+                  <div class="order-header">
+                    <h2>Order #${order.order_number}</h2>
+                    <span class="status ${statusClass}">${order.status}</span>
+                  </div>
+                  <p class="order-date">วันที่ชำระเงิน: ${order.created_at}</p>
+                  <div class="order-items">
+                    <div class="item"><span>${order.product_name} (${order.stock_out} ชิ้น)</span><span>฿${Number(order.amount).toLocaleString()}</span></div>
+                    <hr>
+                    <div class="total"><strong>รวมทั้งหมด</strong><strong>฿${Number(order.amount).toLocaleString()}</strong></div>
+                  </div>
+                  <div class="actions">
+                    <button class="btn view" onclick="viewOrder('${order.order_number}')">ดูรายละเอียด</button>
+                  </div>
+                </div>
+                `;
+              }).join('');
+            });
+        })
+        .catch(console.error);
+    });
+
+    function logout() {
+      window.location.href = "../Login/Login.html";
+    }
+    function viewOrder(orderNumber) {
+      alert("ดูรายละเอียด Order #" + orderNumber);
+      // สามารถ redirect ไปหน้าแสดงรายละเอียดจริงได้
+    }
+  </script>
+  <style>
+    /* ...existing code... */
+    .status-success {
+      background: #c8e6c9;
+      color: #388e3c !important;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+    .status-cancel {
+      background: #ffcdd2;
+      color: #d32f2f !important;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+    /* ...existing code... */
+  </style>
+</body>
+</html>

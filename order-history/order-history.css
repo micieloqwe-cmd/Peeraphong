@@ -1,0 +1,381 @@
+/* =========================================================
+   ORDER HISTORY – CLEAN CSS
+   - คงคลาสเดิมทั้งหมด (ไม่ต้องแก้ HTML)
+   - ใช้ตัวแปรสี/เงา/มุมโค้งให้แก้ง่าย
+   - แยกส่วนโครงสร้างชัดเจน + คอมเมนต์ครบ
+   ========================================================= */
+
+/* ---------- Design Tokens ---------- */
+:root {
+  --brand-1: #0d47a1;
+  /* น้ำเงินแบรนด์ */
+  --brand-2: #004d40;
+  /* เขียวเข้มแบรนด์ */
+  --accent-1: #1976d2;
+  /* ปุ่มหลัก */
+  --accent-2: #d32f2f;
+  /* ปุ่มออกจากระบบ */
+  --bg-page: #f5f7fa;
+  /* พื้นหลังทั้งหน้า */
+  --bg-card: #ffffff;
+  /* พื้นหลังการ์ด */
+  --text-1: #333;
+  /* สีข้อความหลัก */
+  --text-2: #666;
+  /* สีข้อความรอง */
+  --text-3: #777;
+  /* สีวันที่ */
+  --border: #e0e0e0;
+  /* เส้นขอบอ่อน */
+  --radius-lg: 16px;
+  /* มุมโค้งใหญ่ */
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-1: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 3px 10px rgba(0, 0, 0, 0.10);
+  --shadow-pop: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --space-1: 8px;
+  /* 8px scale */
+  --space-2: 12px;
+  --space-3: 15px;
+  --space-4: 20px;
+  --space-5: 30px;
+}
+
+/* ---------- Base / Layout ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Kanit', sans-serif;
+  color: var(--text-1);
+  background: var(--bg-page);
+}
+
+/* คอนเทนเนอร์กลางหน้า */
+.container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: var(--space-5);
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+}
+
+h1 {
+  margin: 0 0 var(--space-4);
+  text-align: center;
+  color: var(--brand-2);
+  font-size: 28px;
+}
+
+/* ---------- Navbar (ด้านบน) ---------- */
+.navbar {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 50px;
+  color: #fff;
+  background: linear-gradient(90deg, var(--brand-2), var(--brand-1));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.logo img {
+  width: 35px;
+  height: 35px;
+  border-radius: 6px;
+}
+
+.navbar nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 25px;
+  font-weight: 500;
+  transition: color .2s;
+}
+
+.navbar nav a:hover {
+  color: #b2dfdb;
+}
+
+.navbar nav a.active {
+  border-bottom: 2px solid #b2dfdb;
+  padding-bottom: 3px;
+}
+
+/* ---------- Profile Dropdown ---------- */
+.profile-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.profile-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #b2dfdb;
+  transition: transform .2s;
+}
+
+.profile-icon:hover {
+  transform: scale(1.08);
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 260px;
+  background: #fff;
+  color: var(--text-1);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+
+.dropdown.show {
+  display: block;
+  animation: fade-in .25s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* กล่องข้อมูลในดรอปดาวน์ */
+.profile-info {
+  text-align: center;
+  padding: var(--space-4);
+  border-bottom: 1px solid #eee;
+}
+
+.profile-info img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid var(--brand-1);
+}
+
+.profile-info h4 {
+  margin: 10px 0 4px;
+  color: var(--brand-1);
+  font-size: 18px;
+}
+
+.profile-info p {
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+/* ปุ่มในดรอปดาวน์ */
+.profile-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.profile-buttons button {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity .2s;
+  font-family: 'Kanit', sans-serif;
+  color: #fff;
+}
+
+.profile-buttons .edit-btn {
+  background: var(--accent-1);
+}
+
+.profile-buttons .logout-btn {
+  background: var(--accent-2);
+}
+
+.profile-buttons button:hover {
+  opacity: .9;
+}
+
+/* ---------- การ์ดคำสั่งซื้อ ---------- */
+.order-card {
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: var(--space-4);
+  margin-bottom: 25px;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
+
+/* ส่วนหัวของการ์ด */
+.order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.order-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text-1);
+}
+
+.order-date {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+/* ป้ายสถานะ (พื้นฐาน) */
+.status {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 20px;
+  text-align: center;
+  background: #eef2ff;
+  color: #1e40af;
+}
+
+/* ตัวอย่างสถานะแต่ละประเภท (ใช้เพิ่มคลาสตามต้องการ) */
+.status.--await {
+  background: #fff7e6;
+  color: #b26a00;
+}
+
+/* ยืนยันและรอชำระเงิน */
+.status.--checking {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+/* รอตรวจสอบ */
+.status.--paid {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* ชำระสมบูรณ์ */
+.status.--cancel {
+  background: #fdecea;
+  color: #c62828;
+}
+
+/* ยกเลิก */
+
+/* รายการสินค้าในคำสั่งซื้อ */
+.order-items {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px 15px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.item+.item {
+  border-top: 1px dashed #eee;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--brand-2);
+}
+
+/* ปุ่มการกระทำ */
+.actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  border: none;
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.btn.view {
+  background: var(--accent-1);
+}
+
+.btn:hover {
+  opacity: .9;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 12px 18px;
+  }
+
+  .navbar nav a {
+    margin-left: 14px;
+  }
+
+  .container {
+    margin: 24px auto;
+    padding: var(--space-4);
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  /* ยกเลิกคำสั่งซื้อจาก Admin */
+.status.--admin-cancel {
+  background: #ffe0b2;
+  color: #e65100;
+}
+
+}

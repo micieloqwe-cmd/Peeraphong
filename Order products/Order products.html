@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ยืนยันคำสั่งซื้อ | Football Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Order products.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo-section">
+      <img src="../uploads/h0-Photoroom.jpg" alt="Logo" class="logo-icon" />
+      <h1>Football Store</h1>
+    </div>
+
+    <div class="nav-links">
+      <a href="../index/index.html"><i class="fas fa-home"></i> หน้าหลัก</a>
+      <a href="../Product/basket.html"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
+      <a href="../order-history/order-history.html"><i class="fas fa-receipt"></i> ประวัติการสั่งซื้อ</a>
+    </div>
+
+    <div class="profile-section">
+      <img src="../uploads/iconprofile.jpg" alt="โปรไฟล์" id="profileIcon" class="profile-icon" />
+      <div class="dropdown" id="profileDropdown">
+        <div class="profile-info">
+          <img id="userImg" src="../uploads/iconprofile.jpg" alt="User Image" />
+          <h4 class="userFullname-nav">กำลังโหลด...</h4>
+          <p class="userEmail-nav">กำลังโหลด...</p>
+        </div>
+        <div class="profile-buttons">
+          <button class="edit-btn" onclick="window.location.href='../Edit_profile/edit_profile.html'">
+            <i class="fas fa-user-edit"></i> แก้ไขข้อมูลส่วนตัว
+          </button>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- เนื้อหาหลัก -->
+  <div class="order-container">
+    <h2>🛍️ ยืนยันคำสั่งซื้อ</h2>
+
+    <!-- ✅ กล่องแสดงข้อมูลผู้ใช้ -->
+    <div class="user-info" style="
+      margin: 15px 0;
+      background: #e3f2fd;
+      padding: 14px 18px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    ">
+      <p><b>ชื่อผู้ใช้:</b> <span id="userFullname" style="color:#0d47a1;">กำลังโหลด...</span></p>
+      <p><b>อีเมล:</b> <span id="userEmail" style="color:#0d47a1;">กำลังโหลด...</span></p>
+    </div>
+
+    <!-- ตารางสินค้า -->
+    <div id="orderList"></div>
+
+    <!-- สถานะ -->
+    <div class="order-status">
+      <span id="orderStatus"></span>
+      <span id="countdown"></span>
+      <div id="paymentInfo" style="margin-top:10px;color:#0d47a1;font-weight:600;"></div>
+    </div>
+
+    <!-- ส่วนชำระเงิน -->
+    <div class="payment-section" id="paymentSection">
+      <h3>💳 โอนเงินชำระค่าสินค้า</h3>
+      <p class="bank-info">บัญชีธนาคาร: <b id="bankAccount">096-401-4011</b> (Football Store)</p>
+
+      <div class="qr-box">
+        <img id="qrImage" src="../uploads/placeholder.png" alt="QR Code ชำระเงิน"
+          onerror="this.onerror=null;this.src='../uploads/noimage.png';">
+        <p class="amount">ยอดชำระ: <span id="totalAmount">0</span> บาท</p>
+        <p class="scan-text">📱 สแกน QR เพื่อชำระเงิน</p>
+      </div>
+
+      <!-- กล่องอัปโหลด -->
+      <div class="upload-box" id="uploadBox">
+        <label for="receiptImg">📤 อัปโหลดใบเสร็จโอนเงิน</label>
+        <input type="file" id="receiptImg" accept="image/*">
+        <div id="previewImg"></div>
+        <p class="filename"></p>
+        <button id="payBtn" class="btn confirm"><i class="fas fa-upload"></i> แจ้งโอนเงิน</button>
+      </div>
+    </div>
+
+    <!-- ปุ่มล่าง -->
+    <div class="actions">
+      <button id="cancelBtn" class="btn cancel"><i class="fas fa-times"></i> ยกเลิกคำสั่งซื้อ</button>
+      <a href="../order-history/order-history.html" class="btn history"><i class="fas fa-clock"></i> ดูประวัติการสั่งซื้อ</a>
+    </div>
+
+    <!-- ปุ่มกลับ -->
+    <div class="nav-icons">
+      <a href="../index/index.html"><i class="fas fa-arrow-left"></i> กลับหน้าหลัก</a>
+    </div>
+  </div>
+
+  <footer>
+    <h4>Football Store</h4>
+    <p>ร้านขายอุปกรณ์ฟุตบอลครบวงจร ⚽ | © 2025 All Rights Reserved</p>
+  </footer>
+
+  <!-- Script หลัก -->
+  <script src="Order products.js"></script>
+
+  <script>
+    /* ===============================
+       จัดการโปรไฟล์ Navbar และดึงข้อมูล
+    =============================== */
+    const profileIcon = document.getElementById("profileIcon");
+    const profileDropdown = document.getElementById("profileDropdown");
+
+    // เปิด/ปิด dropdown
+    profileIcon.addEventListener("click", () => profileDropdown.classList.toggle("show"));
+    document.addEventListener("click", (e) => {
+      if (!profileDropdown.contains(e.target) && e.target !== profileIcon)
+        profileDropdown.classList.remove("show");
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "../Login/Login.html";
+    }
+
+    // ✅ ดึงข้อมูลโปรไฟล์เพียงครั้งเดียว
+    window.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res = await fetch("../index/check_login.php", { credentials: "include" });
+        const user = await res.json();
+
+        if (!user.loggedIn) {
+          alert("กรุณาเข้าสู่ระบบก่อนทำรายการ");
+          window.location.href = "../Login/Login.html";
+          return;
+        }
+
+        // แสดงผลในทุกจุด
+        document.querySelectorAll("#userFullname").forEach(el => el.textContent = `${user.firstname} ${user.lastname}`);
+        document.querySelectorAll("#userEmail").forEach(el => el.textContent = user.email);
+        document.querySelectorAll(".userFullname-nav").forEach(el => el.textContent = `${user.firstname} ${user.lastname}`);
+        document.querySelectorAll(".userEmail-nav").forEach(el => el.textContent = user.email);
+        document.getElementById("userImg").src = "../uploads/iconprofile.jpg";
+        document.getElementById("profileIcon").src = "../uploads/iconprofile.jpg";
+
+        // เก็บลง localStorage สำหรับ Order products.js ใช้
+        localStorage.setItem("userEmail", user.email);
+        localStorage.setItem("userName", `${user.firstname} ${user.lastname}`);
+      } catch (err) {
+        console.error("❌ โหลดข้อมูลผู้ใช้ไม่สำเร็จ:", err);
+      }
+    });
+
+    // เพิ่มเติม: แสดงข้อมูล order หลังแจ้งโอนเงิน
+    window.showPaymentInfo = function(order_number, email, fullname, status) {
+      document.getElementById("paymentInfo").innerHTML =
+        `<div>หมายเลขคำสั่งซื้อ: <b>${order_number || '-'}</b></div>
+         <div>อีเมล: <b>${email || '-'}</b></div>
+         <div>ชื่อ-นามสกุล: <b>${fullname || '-'}</b></div>
+         <div>สถานะการชำระเงิน: <span style="color:#e53935">${status || '-'}</span></div>`;
+    };
+  </script>
+</body>
+</html>

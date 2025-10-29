@@ -1,0 +1,300 @@
+:root {
+    --bg-page: #f6f8fc;
+    --surface: #ffffff;
+    --ink: #1c2534;
+    --muted: #667085;
+    --line: #e7eaf1;
+
+    --brand: #0d47a1;
+    --brand-2: #0a7ad9;
+    --ok: #2e7d32;
+    --violet: #6a1b9a;
+
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 10px;
+
+    --shadow-1: 0 10px 30px rgba(16, 24, 40, .08);
+    --shadow-2: 0 4px 16px rgba(16, 24, 40, .06);
+}
+
+/* ---------- Page ---------- */
+body {
+    background: var(--bg-page);
+    color: var(--ink);
+}
+
+/* ---------- Main ---------- */
+.report-main {
+    padding: 28px;
+}
+
+.report-title {
+    margin: 0 0 18px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: .2px;
+    background: linear-gradient(90deg, #0d47a1, #0a7ad9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ---------- Grid ---------- */
+.report-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width:1100px) {
+    .report-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ---------- Card (สวย/คม/อ่านง่าย) ---------- */
+.card {
+    position: relative;
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #172b4d;
+}
+
+.card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px 16px;
+    margin-bottom: 12px;
+}
+
+/* กรอบขอบไล่สีแบบเบาๆ */
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(110deg, rgba(0, 212, 255, .28), rgba(124, 77, 255, .28));
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: .55;
+    z-index: 0;
+}
+
+.card>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* ---------- Filters / Controls ---------- */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+}
+
+.filters label {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-right: 2px;
+}
+
+.filters select,
+.filters input {
+    min-width: 160px;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fbfcff;
+    color: var(--ink);
+    font-size: 14px;
+    box-shadow: var(--shadow-2);
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.filters select:focus,
+.filters input:focus {
+    outline: none;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, .12);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow-2);
+    transition: transform .06s ease, filter .18s ease;
+    cursor: pointer;
+}
+
+.btn:hover {
+    filter: brightness(1.03);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn i {
+    color: inherit;
+}
+
+.btn.primary {
+    background: linear-gradient(180deg, #4da3ff, #0a7ad9);
+}
+
+.btn.success {
+    background: linear-gradient(180deg, #57d483, #2e7d32);
+}
+
+.btn.violet {
+    background: linear-gradient(180deg, #b39ddb, #6a1b9a);
+}
+
+/* ---------- Table ---------- */
+.table-wrap {
+    margin-top: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: auto;
+    background: #fff;
+    box-shadow: var(--shadow-2);
+}
+
+.report-table {
+    width: 100%;
+    min-width: 740px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+/* หัวตาราง Sticky */
+.report-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, #f7f9ff, #eef3ff);
+    color: #1f2937;
+    text-align: left;
+    padding: 12px 14px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--line);
+}
+
+/* ตัวตาราง */
+.report-table tbody td,
+.report-table tfoot td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f1f3f6;
+}
+
+.report-table tbody tr:nth-child(even) {
+    background: #fbfdff;
+}
+
+.report-table tbody tr:hover {
+    background: #f3f7ff;
+}
+
+/* ท้ายตาราง (รวม) */
+.report-table tfoot td {
+    font-weight: 800;
+    background: #f6f8ff;
+    border-top: 1px solid #e5e9f4;
+}
+
+.num {
+    text-align: right;
+}
+
+/* ---------- Charts ---------- */
+#chartMonthly,
+#chartYearly {
+    margin-top: 10px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 8px;
+    box-shadow: var(--shadow-2);
+}
+
+/* ---------- Scrollbar (สวย/ไม่รก) ---------- */
+.table-wrap::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+}
+
+.table-wrap::-webkit-scrollbar-track {
+    background: #eef2f7;
+    border-radius: 999px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #94c2ff, #7aa7ff);
+    border-radius: 999px;
+    border: 3px solid #eef2f7;
+}
+
+/* ---------- Print-friendly ---------- */
+@media print {
+
+    .sidebar,
+    .logout,
+    .filters .btn {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+    }
+
+    .report-main {
+        padding: 0;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .table-wrap {
+        box-shadow: none;
+    }
+
+    .report-table thead th {
+        background: #f2f3f7;
+        color: #222;
+    }
+
+    .report-table tbody td,
+    .report-table tfoot td {
+        color: #222;
+        border-color: #ddd;
+    }
+}

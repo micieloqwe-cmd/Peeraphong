@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>รายงาน - Football Store</title>
+  <link rel="stylesheet" href="../Admin_index/Admin_index.css" />
+  <link rel="stylesheet" href="Admin_report.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- ===== Sidebar ===== -->
+  <div class="sidebar">
+    <h2>Football Store<br><span>Admin Panel</span></h2>
+   <div class="profile">
+      <img src="../uploads/Admin.jpg" alt="Admin">
+      <p id="adminProfileName">
+        <span id="adminProfileText">ผู้ดูแลระบบ</span><br>
+        <small id="adminProfileEmail">กำลังโหลด...</small>
+      </p>
+    </div>
+
+    <ul>
+      <li id="dashboardMenu"><i class="fas fa-chart-line"></i> แดชบอร์ด</li>
+      <li id="productMenu"><i class="fas fa-box"></i> จัดการสินค้า</li>
+      <li id="paymentMenu"><i class="fas fa-credit-card"></i> การชำระเงิน</li>
+      <li class="active" id="reportMenu"><i class="fas fa-file-alt"></i> รายงาน</li>
+      <li id="profileMenu"><i class="fas fa-user"></i> ข้อมูลส่วนตัว</li>
+    </ul>
+    <button class="logout" onclick="window.location.href='../Admin/Admin.html'">
+      <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+    </button>
+  </div>
+
+  <!-- ===== Main ===== -->
+  <div class="main-content report-main">
+    <h1 class="report-title"><i class="fas fa-file-alt"></i> รายงาน</h1>
+
+    <div class="report-grid">
+
+      <!-- รายรับรายเดือน -->
+      <section class="card" id="monthlyCard">
+        <div class="card-head">
+          <h2>รายงานออเดอร์รายเดือน</h2>
+          <div class="filters">
+            <label>ปี</label>
+            <select id="yearSelect"></select>
+
+            <label>สถานะออเดอร์</label>
+            <select id="statusMonthly">
+              <option value="complete">เฉพาะชำระเงินสมบูรณ์รอจัดส่ง</option>
+              <option value="complete_checking">รวมชำระเงินสำเร็จรอการตรวจสอบ</option>
+            </select>
+
+            <button class="btn primary" id="btnLoadMonthly"><i class="fa fa-rotate"></i> โหลดข้อมูล</button>
+            <button class="btn violet" id="btnPrintMonthly"><i class="fa fa-print"></i> พิมพ์</button>
+            <button class="btn info" id="btnShowOrdersMonthly"><i class="fa fa-list"></i> ดูออเดอร์</button>
+          </div>
+        </div>
+
+        <canvas id="chartMonthly" height="120"></canvas>
+
+        <div class="table-wrap">
+          <table id="tableOrdersMonthly" class="report-table">
+            <thead>
+              <tr>
+                <th>เดือน</th>
+                <th>จำนวนออเดอร์</th>
+                <th>ยอดรวม (บาท)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <td>รวม</td>
+                <td id="mnCnt">0</td>
+                <td id="mnSum">0</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- รายรับรายปี -->
+      <section class="card" id="yearlyCard">
+        <div class="card-head">
+          <h2>รายงานออเดอร์รายปี</h2>
+          <div class="filters">
+            <label>จากปี</label>
+            <select id="fromYear"></select>
+            <label>ถึงปี</label>
+            <select id="toYear"></select>
+
+            <label>สถานะออเดอร์</label>
+            <select id="statusYearly">
+              <option value="complete">เฉพาะชำระเงินสมบูรณ์รอจัดส่ง</option>
+              <option value="complete_checking">รวมชำระเงินสำเร็จรอการตรวจสอบ</option>
+            </select>
+
+            <button class="btn primary" id="btnLoadYearly"><i class="fa fa-rotate"></i> โหลดข้อมูล</button>
+            <button class="btn violet" id="btnPrintYearly"><i class="fa fa-print"></i> พิมพ์</button>
+            <button class="btn info" id="btnShowOrdersYearly"><i class="fa fa-list"></i> ดูออเดอร์</button>
+          </div>
+        </div>
+
+        <canvas id="chartYearly" height="120"></canvas>
+
+        <div class="table-wrap">
+          <table id="tableOrdersYearly" class="report-table">
+            <thead>
+              <tr>
+                <th>ปี</th>
+                <th>จำนวนออเดอร์</th>
+                <th>ยอดรวม (บาท)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <tr>
+                <td>รวม</td>
+                <td id="yrCnt">0</td>
+                <td id="yrSum">0</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // ===== Sidebar nav =====
+    (function(){
+      const go = (id, href) => { const el = document.getElementById(id); if(el) el.onclick = ()=> location.href = href; };
+      go("dashboardMenu", "../Admin_index/Admin_index.html");
+      go("productMenu", "../admin_products/admin_products.html");
+      go("paymentMenu", "../Admin_Payment/Admin_Payment.html");
+      go("reportMenu",  "../Admin_report/Admin_report.html");
+      go("profileMenu", "../Admin_personal information/personal information.html");
+    })();
+
+    // ===== Utilities =====
+    const thMonths = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+    const fmt = n => (+n || 0).toLocaleString('th-TH', {maximumFractionDigits: 2});
+
+    // ===== Year selects =====
+    (function initYearSelectors(){
+      const yNow = new Date().getFullYear();
+      const yearSelect = document.getElementById('yearSelect');
+      const fromYear = document.getElementById('fromYear');
+      const toYear = document.getElementById('toYear');
+      for(let y = yNow; y >= yNow - 10; y--){
+        const opt1 = new Option(y, y); const opt2 = new Option(y, y); const opt3 = new Option(y, y);
+        yearSelect.add(opt1.cloneNode(true));
+        fromYear.add(opt2);
+        toYear.add(opt3);
+      }
+      yearSelect.value = yNow;
+      fromYear.value = yNow - 5 >= yNow - 10 ? (yNow - 5) : yNow;
+      toYear.value = yNow;
+    })();
+
+    // ===== Toggle Chart Source =====
+    let chartMonthlySource = "payments"; // payments | orders
+    let chartYearlySource = "payments";  // payments | orders
+
+    // เพิ่มปุ่ม toggle ใน filters
+    const monthlyFilters = document.querySelector("#monthlyCard .filters");
+    const yearlyFilters = document.querySelector("#yearlyCard .filters");
+    monthlyFilters.insertAdjacentHTML("beforeend", `
+      <label style="margin-left:10px;">กราฟจาก</label>
+      <select id="monthlyChartSource">
+        <option value="payments">การชำระเงิน</option>
+        <option value="orders">ออเดอร์</option>
+      </select>
+    `);
+    yearlyFilters.insertAdjacentHTML("beforeend", `
+      <label style="margin-left:10px;">กราฟจาก</label>
+      <select id="yearlyChartSource">
+        <option value="payments">การชำระเงิน</option>
+        <option value="orders">ออเดอร์</option>
+      </select>
+    `);
+
+    document.getElementById("monthlyChartSource").addEventListener("change", function() {
+      chartMonthlySource = this.value;
+      loadMonthly();
+    });
+    document.getElementById("yearlyChartSource").addEventListener("change", function() {
+      chartYearlySource = this.value;
+      loadYearly();
+    });
+
+    // ===== Charts (Chart.js) =====
+    let chartMonthly, chartYearly;
+
+    async function loadMonthly(){
+      const year = document.getElementById('yearSelect').value;
+      const statusMode = document.getElementById('statusMonthly').value;
+      const url = `Admin_report.php?action=orders_monthly&year=${encodeURIComponent(year)}&mode=${statusMode}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      // table
+      const tb = document.querySelector('#tableOrdersMonthly tbody');
+      tb.innerHTML = '';
+      let sumCnt = 0, sumAmt = 0;
+      for(let i=1;i<=12;i++){
+        const row = data.rows.find(r => +r.month === i) || {count:0, total:0};
+        sumCnt += +row.count; sumAmt += +row.total;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${thMonths[i-1]}</td>
+                        <td>${fmt(row.count)}</td>
+                        <td>${fmt(row.total)}</td>`;
+        tb.appendChild(tr);
+      }
+      document.getElementById('mnCnt').textContent = fmt(sumCnt);
+      document.getElementById('mnSum').textContent = fmt(sumAmt);
+
+      // chart
+      const ctx = document.getElementById('chartMonthly');
+      const labels = thMonths;
+      const series = Array.from({length:12}, (_,i)=>{
+        const found = data.rows.find(r => +r.month === (i+1));
+        return found ? +found.total : 0;
+      });
+      chartMonthly?.destroy();
+      chartMonthly = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: `ยอดรวมออเดอร์ปี ${year} (บาท)`, data: series }] },
+        options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+      });
+    }
+
+    async function loadYearly(){
+      const from = document.getElementById('fromYear').value;
+      const to   = document.getElementById('toYear').value;
+      const statusMode = document.getElementById('statusYearly').value;
+      const url = `Admin_report.php?action=orders_yearly&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&mode=${statusMode}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      // table
+      const tb = document.querySelector('#tableOrdersYearly tbody');
+      tb.innerHTML = '';
+      let sumCnt = 0, sumAmt = 0;
+      const labels = [];
+      const series = [];
+      data.rows.forEach(r=>{
+        sumCnt += +r.count; sumAmt += +r.total;
+        labels.push(r.year);
+        series.push(+r.total);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${r.year}</td>
+                        <td>${fmt(r.count)}</td>
+                        <td>${fmt(r.total)}</td>`;
+        tb.appendChild(tr);
+      });
+      document.getElementById('yrCnt').textContent = fmt(sumCnt);
+      document.getElementById('yrSum').textContent = fmt(sumAmt);
+
+      // chart
+      const ctx = document.getElementById('chartYearly');
+      chartYearly?.destroy();
+      chartYearly = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'ยอดรวมออเดอร์ต่อปี (บาท)', data: series }] },
+        options: { responsive:true, scales:{ y:{ beginAtZero:true } }, tension:.3 }
+      });
+    }
+
+    // ===== Orders Monthly =====
+    document.getElementById('btnShowOrdersMonthly').onclick = async function() {
+      const year = document.getElementById('yearSelect').value;
+      const statusMode = document.getElementById('statusMonthly').value;
+      const url = `Admin_report.php?action=orders_monthly&year=${encodeURIComponent(year)}&mode=${statusMode}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const tb = document.querySelector('#tableOrdersMonthly tbody');
+      tb.innerHTML = '';
+      let sumCnt = 0, sumAmt = 0;
+      for(let i=1;i<=12;i++){
+        const row = data.rows.find(r => +r.month === i) || {count:0, total:0};
+        sumCnt += +row.count; sumAmt += +row.total;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${thMonths[i-1]}</td>
+                        <td>${fmt(row.count)}</td>
+                        <td>${fmt(row.total)}</td>`;
+        tb.appendChild(tr);
+      }
+      document.getElementById('tableOrdersMonthly').style.display = '';
+    };
+
+    // ===== Orders Yearly =====
+    document.getElementById('btnShowOrdersYearly').onclick = async function() {
+      const from = document.getElementById('fromYear').value;
+      const to   = document.getElementById('toYear').value;
+      const statusMode = document.getElementById('statusYearly').value;
+      const url = `Admin_report.php?action=orders_yearly&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&mode=${statusMode}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const tb = document.querySelector('#tableOrdersYearly tbody');
+      tb.innerHTML = '';
+      data.rows.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${r.year}</td>
+                        <td>${fmt(r.count)}</td>
+                        <td>${fmt(r.total)}</td>`;
+        tb.appendChild(tr);
+      });
+      document.getElementById('tableOrdersYearly').style.display = '';
+    };
+
+    // ===== Actions =====
+    document.getElementById('btnLoadMonthly').onclick = loadMonthly;
+    document.getElementById('btnLoadYearly').onclick  = loadYearly;
+    document.getElementById('btnPrintMonthly').onclick = ()=> window.print();
+    document.getElementById('btnPrintYearly').onclick  = ()=> window.print();
+
+    document.getElementById('btnShowOrdersMonthly').onclick = loadMonthly;
+    document.getElementById('btnShowOrdersYearly').onclick = loadYearly;
+
+    // ดึงข้อมูลโปรไฟล์แอดมินจากเซิร์ฟเวอร์
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch("../Admin/get_admin_profile.php")
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById("adminProfileText").textContent = `${data.firstname || ''} ${data.lastname || ''}`;
+            document.getElementById("adminProfileEmail").textContent = data.email || '';
+          }
+        });
+    });
+
+    // โหลดเริ่มต้น
+    loadMonthly();
+    loadYearly();
+  </script>
+</body>
+</html>

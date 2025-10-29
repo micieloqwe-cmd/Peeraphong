@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ข้อมูลส่วนตัว</title>
+  <link rel="stylesheet" href="edit_profile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <h1>ข้อมูลส่วนตัว</h1>
+
+  <form id="profileForm">
+    <!-- Section: ข้อมูลส่วนตัว -->
+    <fieldset>
+      <legend>ข้อมูลส่วนตัว</legend>
+      <label for="first_name">ชื่อ</label>
+      <input type="text" name="first_name" id="first_name" required />
+
+      <label for="last_name">นามสกุล</label>
+      <input type="text" name="last_name" id="last_name" required />
+
+      <label for="phone">เบอร์โทรศัพท์</label>
+      <input type="tel" name="phone" id="phone" required />
+    </fieldset>
+
+    <!-- Section: ที่อยู่ -->
+    <fieldset>
+      <legend>ที่อยู่</legend>
+      <label for="house_number">บ้านเลขที่ *</label>
+      <input type="text" name="house_number" id="house_number" required />
+
+      <label for="road">ถนน</label>
+      <input type="text" name="road" id="road" />
+
+      <label for="soi">ซอย</label>
+      <input type="text" name="soi" id="soi" />
+
+      <label for="subdistrict">ตำบล</label>
+      <input type="text" name="subdistrict" id="subdistrict" />
+
+      <label for="province">จังหวัด *</label>
+      <select name="province" id="province" required>
+        <option value="">-- เลือกจังหวัด --</option>
+      </select>
+
+      <label for="district">อำเภอ *</label>
+      <select name="district" id="district" required>
+        <option value="">-- เลือกอำเภอ --</option>
+      </select>
+    </fieldset>
+
+    <!-- Section: ความปลอดภัย -->
+    <fieldset>
+      <legend>ความปลอดภัย</legend>
+      <label for="new_password">รหัสผ่านใหม่ (ไม่บังคับ)</label>
+      <input type="password" name="new_password" id="new_password" />
+
+      <label for="confirm_password">ยืนยันรหัสผ่านใหม่</label>
+      <input type="password" name="confirm_password" id="confirm_password" />
+    </fieldset>
+
+    <button type="submit" id="submitBtn">บันทึกข้อมูล</button>
+    <div id="message"></div>
+  </form>
+</div>
+
+<script src="profile.js"></script>
+</body>
+</html>

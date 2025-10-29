@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายละเอียดสินค้า - Football Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="View product.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">
+      <span>Football Store</span>
+    </div>
+    <div class="nav-links">
+      <a href="View category.html"><i class="fas fa-home"></i> หน้าหลัก</a>
+      <a href="#" id="guestCartBtn"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
+      <a href="#" id="guestHistoryBtn"><i class="fas fa-receipt"></i> ประวัติการสั่งซื้อ</a>
+      <!-- ลบปุ่มเข้าสู่ระบบและสมัครสมาชิกออก -->
+    </div>
+  </header>
+
+  <!-- Main Product -->
+  <main class="product-container">
+    <div class="product-box">
+      <!-- Left -->
+      <div class="left-side">
+        <button class="back-btn" onclick="history.back()">←</button>
+        <img id="productImg" src="" alt="" class="product-image">
+        <div class="product-description">
+          <h2>รายละเอียดสินค้า</h2>
+          <p id="productDesc"></p>
+        </div>
+      </div>
+
+      <!-- Right -->
+      <div class="right-side">
+        <h2 id="productName"></h2>
+        <div class="size-section" id="sizeSection" style="display:none;">
+          <label>SIZE (ขนาด)</label>
+          <div class="sizes" id="sizes"></div>
+        </div>
+
+        <div class="quantity-section">
+          <label>จำนวน</label>
+          <div class="quantity-control">
+            <button onclick="forceRegister()">−</button>
+            <span id="qty">1</span>
+            <button onclick="forceRegister()">+</button>
+          </div>
+          <p class="stock">เหลือ <span id="stock">0</span> ชิ้น</p>
+        </div>
+
+        <div class="button-group">
+          <button class="btn secondary" onclick="forceRegister()">เพิ่มลงตะกร้า</button>
+          <button class="btn primary" onclick="forceRegister()">สั่งซื้อทันที</button>
+        </div>
+        <p class="price"><b id="productPrice"></b> บาท</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Script -->
+  <script>
+    let qty = 1;
+    let maxStock = 1;
+    let product = null;
+
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+    const productId = getQueryParam('product_id');
+
+    // ดึงข้อมูลจาก database (View get_products.php)
+    fetch('View get_products.php')
+      .then(res => res.json())
+      .then(data => {
+        const products = data.products || [];
+        product = products.find(p => String(p.product_id) === String(productId));
+        if (!product) {
+          alert("ไม่พบสินค้า");
+          return;
+        }
+        document.getElementById('productImg').src = "../" + product.image;
+        document.getElementById('productName').textContent = product.product_name;
+        document.getElementById('productPrice').textContent = Number(product.price).toLocaleString();
+        document.getElementById('stock').textContent = product.stock;
+        maxStock = Number(product.stock) || 1;
+        document.getElementById('qty').textContent = qty;
+
+        document.getElementById('productDesc').innerHTML = `
+          <b>รุ่น:</b> ${product.product_name}<br>
+          <b>แบรนด์:</b> ${product.brand}<br>
+          <b>ราคา:</b> ${Number(product.price).toLocaleString()} บาท<br>
+          <b>สาขา:</b> ${product.branch}<br>
+          <b>หมวดหมู่:</b> ${product.category_id}<br>
+        `;
+
+        const sizeCat = [2,3,4,6];
+        if (sizeCat.includes(Number(product.category_id))) {
+          document.getElementById('sizeSection').style.display = '';
+          document.getElementById('sizes').innerHTML = ['S','M','L','XL','40','41','42','43']
+            .map(s => `<span>${s}</span>`).join('');
+        }
+      });
+
+    function updateQtyDisplay() {
+      document.getElementById('qty').textContent = qty;
+    }
+    function increaseQty() {
+      if (qty < maxStock) { qty++; updateQtyDisplay(); }
+    }
+    function decreaseQty() {
+      if (qty > 1) { qty--; updateQtyDisplay(); }
+    }
+    function addToCart() {
+      if (!product) return;
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const idx = cart.findIndex(item => item.id == product.product_id);
+      if (idx >= 0) {
+        cart[idx].qty += qty;
+      } else {
+        cart.push({ id: product.product_id, name: product.product_name, price: Number(product.price), image: product.image, qty });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(`เพิ่ม ${product.product_name} จำนวน ${qty} ชิ้น ลงในตะกร้าแล้ว`);
+    }
+    function buyNow() {
+      addToCart();
+      window.location.href = "basket.html";
+    }
+    function forceRegister() {
+      alert("กรุณาสมัครสมาชิกหรือเข้าสู่ระบบก่อนใช้งานฟังก์ชันนี้");
+      window.location.href = "../Register/apply.html";
+    }
+
+    // ปุ่มตะกร้า/ประวัติการสั่งซื้อ guest
+    document.getElementById('guestCartBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      forceRegister();
+    });
+    document.getElementById('guestHistoryBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      forceRegister();
+    });
+
+    // ปุ่มกลับหน้าหลัก
+    document.querySelector('.nav-links a[href="View category.html"]').onclick = function(e) {
+      e.preventDefault();
+      window.location.href = "View index.html";
+    };
+
+    // ป้องกันการใช้งานอื่นๆ
+    document.addEventListener('click', function(e) {
+      // ถ้าเป็นปุ่มหรือ element ที่ควรบังคับสมัครสมาชิก
+      if (
+        e.target.matches('.btn.primary, .btn.secondary, .quantity-control button, .cart-icon, .sizes span')
+      ) {
+        e.preventDefault();
+        forceRegister();
+      }
+    }, true);
+  </script>
+</body>
+</html>
